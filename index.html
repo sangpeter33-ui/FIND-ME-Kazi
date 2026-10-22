@@ -1,1 +1,200 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f47721">
+  <meta name="description" content="FIND-ME helps you discover local service providers in your area.">
+  <title>FIND-ME | Find Local Services</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <a class="logo" href="#home" aria-label="FIND-ME home">
+      <span class="logo-icon">F</span>
+      <span>FIND<span class="logo-dash">-</span>ME</span>
+    </a>
+    <a class="header-link" href="#services">Explore Services</a>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-content">
+        <span class="eyebrow">YOUR LOCAL SERVICE DIRECTORY</span>
+        <h1>Find the right help.<br><span>Right around you.</span></h1>
+        <p>
+          Need a plumber, electrician, mechanic or other professional?
+          FIND-ME helps you discover services in your community.
+        </p>
+
+        <form id="searchForm" class="search-box" role="search">
+          <label class="sr-only" for="searchInput">
+            Search services or providers
+          </label>
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="What service do you need?"
+            autocomplete="off"
+          >
+          <button type="submit" class="search-button">Search</button>
+        </form>
+
+        <div class="location-box">
+          <div class="location-copy">
+            <span class="location-symbol" aria-hidden="true">◎</span>
+            <div>
+              <strong>Find services near you</strong>
+              <p id="locationStatus" aria-live="polite">
+                Allow location access to find your area.
+              </p>
+            </div>
+          </div>
+          <button id="locationButton" class="location-button" type="button">
+            Use My Location
+          </button>
+        </div>
+      </div>
+      <div class="hero-decoration" aria-hidden="true">
+        <span>F</span>
+        <span>+</span>
+        <span>ME</span>
+      </div>
+    </section>
+
+    <section class="section" id="services">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow orange-text">EXPLORE FIND-ME</span>
+          <h2>What do you need today?</h2>
+          <p>Choose a category or search for a service.</p>
+        </div>
+      </div>
+
+      <div class="category-grid" id="categoryGrid">
+        <button class="category-card active" type="button" data-category="all">
+          <span class="category-icon">✦</span>
+          <span>All Services</span>
+        </button>
+        <button class="category-card" type="button" data-category="Plumbers">
+          <span class="category-icon">♧</span>
+          <span>Plumbers</span>
+        </button>
+        <button class="category-card" type="button" data-category="Electricians">
+          <span class="category-icon">ϟ</span>
+          <span>Electricians</span>
+        </button>
+        <button class="category-card" type="button" data-category="Mechanics">
+          <span class="category-icon">⚙</span>
+          <span>Mechanics</span>
+        </button>
+        <button class="category-card" type="button" data-category="Appliance Repair">
+          <span class="category-icon">▣</span>
+          <span>Appliance Repair</span>
+        </button>
+        <button class="category-card" type="button" data-category="Cleaning Services">
+          <span class="category-icon">✧</span>
+          <span>Cleaning Services</span>
+        </button>
+        <button class="category-card" type="button" data-category="Phone Repair">
+          <span class="category-icon">▯</span>
+          <span>Phone Repair</span>
+        </button>
+        <button class="category-card" type="button" data-category="Bodaboda">
+          <span class="category-icon">➜</span>
+          <span>Bodaboda</span>
+        </button>
+        <button class="category-card" type="button" data-category="Taxi Services">
+          <span class="category-icon">▰</span>
+          <span>Taxi Services</span>
+        </button>
+        <button class="category-card" type="button" data-category="Welders">
+          <span class="category-icon">⚒</span>
+          <span>Welders</span>
+        </button>
+        <button class="category-card" type="button" data-category="Mama Fua">
+          <span class="category-icon">♧</span>
+          <span>Mama Fua</span>
+        </button>
+        <button class="category-card" type="button" data-category="Tutors">
+          <span class="category-icon">▤</span>
+          <span>Tutors</span>
+        </button>
+        <button class="category-card" type="button" data-category="Delivery Service">
+          <span class="category-icon">➜</span>
+          <span>Delivery Service</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="section listings-section" id="listings">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow orange-text">SERVICE DIRECTORY</span>
+          <h2 id="resultsTitle">Explore service examples</h2>
+          <p id="resultsDescription">
+            These sample listings help you test the website.
+          </p>
+        </div>
+        <span id="resultsCount" class="results-count">0 results</span>
+      </div>
+
+      <div id="providerResults" class="provider-grid" aria-live="polite">
+        <p class="empty-state">Loading services...</p>
+      </div>
+      <p class="demo-notice">
+        Demo listings only. These are examples, not verified businesses.
+        Contact details will appear when genuine providers are added.
+      </p>
+    </section>
+
+    <section class="join-section" id="register">
+      <div class="join-content">
+        <span class="join-label">GROW WITH FIND-ME</span>
+        <h2>Ready to join FIND-ME?</h2>
+        <p>
+          Are you a service provider? Get in touch to ask about listing
+          your business in our directory.
+        </p>
+      </div>
+      <a
+        class="register-bar"
+        href="mailto:findme.feedback33@gmail.com?subject=FIND-ME%20Provider%20Registration&body=Hello%20FIND-ME%2C%0A%0AI%20would%20like%20to%20register%20my%20business.%0A%0ABusiness%20name%3A%0AService%20category%3A%0ALocation%3A%0APhone%20number%3A%0A%0AThank%20you."
+      >
+        <span class="register-icon">＋</span>
+        <span>Tap to Register Here</span>
+        <span class="register-arrow">→</span>
+      </a>
+      <p class="register-note">
+        Your email app will open so you can send your registration request.
+      </p>
+    </section>
+
+    <section class="feedback-section">
+      <div>
+        <span class="eyebrow orange-text">WE VALUE YOUR IDEAS</span>
+        <h2>Help us improve FIND-ME</h2>
+        <p>Questions, suggestions or feedback? Send us an email.</p>
+      </div>
+      <a class="feedback-link" href="mailto:findme.feedback33@gmail.com">
+        <span aria-hidden="true">✉</span>
+        findme.feedback33@gmail.com
+      </a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="footer-logo" href="#home">FIND-ME</a>
+    <p>Connecting people with local services.</p>
+    <p class="copyright">
+      &copy; <span id="currentYear"></span> FIND-ME. All rights reserved.
+    </p>
+  </footer>
+
+</body>
+</html>
+
