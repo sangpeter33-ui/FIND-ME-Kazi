@@ -887,3 +887,159 @@ a:focus-visible {
     padding: 17px 12px;
   }
 }
+
+/* FIND-ME REGISTRATION FORM - ALIGNMENT FIX */
+
+.join-section {
+  display: block !important;
+  width: calc(100% - 24px) !important;
+  max-width: 900px !important;
+  margin: 30px auto !important;
+  padding: 28px 16px !important;
+  background: #ffcc33 !important;
+  border-radius: 20px !important;
+  color: #222222 !important;
+}
+
+/* Heading */
+.join-content {
+  display: block !important;
+  width: 100% !important;
+  max-width: 650px !important;
+  margin: 0 auto 25px !important;
+  text-align: center !important;
+}
+
+.join-content h2 {
+  color: #222222 !important;
+}
+
+.join-content p {
+  color: #333333 !important;
+}
+
+/* White registration column */
+.registration-form {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+  width: 100% !important;
+  max-width: 600px !important;
+  margin: 0 auto !important;
+  padding: 24px !important;
+  background: #ffffff !important;
+  border: 1px solid #e4b528 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Each label occupies a complete row */
+.registration-form label {
+  display: block !important;
+  width: 100% !important;
+  margin: 12px 0 2px !important;
+  color: #222222 !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+/* Each input occupies its own complete row */
+.registration-form input,
+.registration-form select {
+  display: block !important;
+  float: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 50px !important;
+  margin: 0 !important;
+  padding: 12px !important;
+  background: #ffffff !important;
+  color: #222222 !important;
+  border: 1px solid #cccccc !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+  box-sizing: border-box !important;
+}
+
+.registration-form input:focus,
+.registration-form select:focus {
+  outline: none !important;
+  border-color: #f47721 !important;
+  box-shadow: 0 0 0 3px rgba(244, 119, 33, 0.15) !important;
+}
+
+/* Privacy text */
+.registration-form .registration-privacy {
+  display: block !important;
+  width: 100% !important;
+  margin: 12px 0 !important;
+  color: #555555 !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+}
+
+/* Orange registration button */
+.registration-form .register-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  min-height: 52px !important;
+  margin-top: 12px !important;
+  padding: 14px 16px !important;
+  background: #f47721 !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 9px !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  box-sizing: border-box !important;
+}
+
+.registration-form .register-bar:hover {
+  background: #d95d0c !important;
+}
+
+/* Confirmation message */
+.registration-form .registration-message {
+  display: block !important;
+  width: 100% !important;
+  margin-top: 12px !important;
+  padding: 12px !important;
+  border-radius: 8px !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.6 !important;
+}
+
+.registration-message:empty {
+  display: none !important;
+}
+
+/* Remove the old note if still present */
+.join-section > .register-note {
+  display: none !important;
+}
+
+/* Mobile alignment */
+@media (max-width: 600px) {
+  .join-section {
+    padding: 22px 12px !important;
+    margin: 20px auto !important;
+  }
+
+  .registration-form {
+    padding: 18px 14px !important;
+  }
+
+  .registration-form label {
+    font-size: 14px !important;
+  }
+
+  .registration-form input,
+  .registration-form select {
+    min-height: 49px !important;
+    font-size: 16px !important;
+  }
+}
