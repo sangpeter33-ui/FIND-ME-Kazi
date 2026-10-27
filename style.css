@@ -307,6 +307,69 @@ textarea {
   box-shadow: var(--fm-shadow);
   text-align: left;
 }
+
+/* Also supports a form placed directly inside the modal */
+
+#registrationModal form,
+#registrationPopup form,
+.registration-modal form,
+.registration-overlay form,
+#providerForm {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 18px;
+  background: var(--fm-yellow);
+  border-radius: 10px;
+  text-align: left;
+}
+
+.registration-modal h2,
+#registrationModal h2,
+#registrationPopup h2,
+.registration-overlay h2,
+#providerForm h2 {
+  margin-top: 0;
+  color: var(--fm-navy);
+  text-align: center;
+}
+
+#registrationModal label,
+#registrationPopup label,
+.registration-modal label,
+.registration-overlay label,
+#providerForm label {
+  display: block;
+  margin: 12px 0 5px;
+  color: var(--fm-navy);
+  font-weight: bold;
+}
+
+#registrationModal input,
+#registrationModal select,
+#registrationModal textarea,
+#registrationPopup input,
+#registrationPopup select,
+#registrationPopup textarea,
+.registration-modal input,
+.registration-modal select,
+.registration-modal textarea,
+.registration-overlay input,
+.registration-overlay select,
+.registration-overlay textarea,
+#providerForm input,
+#providerForm select,
+#providerForm textarea {
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  margin: 0 0 12px;
+  padding: 11px;
+  background: #ffffff;
+  border: 1px solid #d0a94a;
+  border-radius: 7px;
+}
+
 /* Form action buttons */
 
 #registrationModal button[type="submit"],
