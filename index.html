@@ -4,274 +4,340 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f47721">
-  <meta name="description" content="FIND-ME helps you discover local service providers in your area.">
-  <title>FIND-ME | Find Local Services</title>
+  <meta name="theme-color" content="#ff7900">
+  <meta name="description" content="FIND-ME helps you discover local service providers near you in Kenya.">
+  <title>FIND-ME | Find Services Near You</title>
   <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
 </head>
 <body>
 
   <header class="site-header">
-    <a class="logo" href="#home" aria-label="FIND-ME home">
-      <span class="logo-icon">F</span>
-      <span>FIND<span class="logo-dash">-</span>ME</span>
-    </a>
-    <a class="header-link" href="#services">Explore Services</a>
+    <div class="header-content">
+      <a class="logo" href="#" aria-label="FIND-ME home">
+        <span class="logo-icon">F</span>
+        <span>FIND-<strong>ME</strong></span>
+      </a>
+      <p class="header-tagline">Find it. Tap it. Get it done.</p>
+    </div>
   </header>
 
   <main>
-    <!-- HERO SECTION -->
-    <section class="hero" id="home">
-      <div class="hero-content">
-        <span class="eyebrow">YOUR LOCAL SERVICE DIRECTORY</span>
-        <h1>Find the right help.<br><span>Right around you.</span></h1>
-        <p>
-          Need a plumber, electrician, mechanic or other professional?
-          FIND-ME helps you discover services in your community.
-        </p>
+    <section class="hero">
+      <span class="welcome-badge">WELCOME TO FIND-ME</span>
+      <h1>Find the right service <span>near you.</span></h1>
+      <p class="hero-description">
+        Connect with local service providers quickly and conveniently.
+        Your town, your services, one place.
+      </p>
 
-        <form id="searchForm" class="search-box" role="search">
-          <label class="sr-only" for="searchInput">
-            Search services or providers
-          </label>
-          <span class="search-icon" aria-hidden="true">⌕</span>
-          <input
-            id="searchInput"
-            type="search"
-            placeholder="What service do you need?"
-            autocomplete="off"
-          >
-          <button type="submit" class="search-button">Search</button>
-        </form>
+      <form id="searchForm" class="search-box">
+        <label class="sr-only" for="serviceSearch">Search for a service</label>
+        <input
+          type="search"
+          id="serviceSearch"
+          placeholder="What service do you need?"
+          autocomplete="off"
+        >
+        <button type="submit" class="primary-button">Search</button>
+      </form>
 
-        <div class="location-box">
-          <div class="location-copy">
-            <span class="location-symbol" aria-hidden="true">◎</span>
-            <div>
-              <strong>Find services near you</strong>
-              <p id="locationStatus" aria-live="polite">
-                Allow location access to find your area.
-              </p>
-            </div>
-          </div>
-          <button id="locationButton" class="location-button" type="button">
-            Use My Location
-          </button>
-        </div>
-      </div>
-
-      <div class="hero-decoration" aria-hidden="true">
-        <span>F</span>
-        <span>+</span>
-        <span>ME</span>
-      </div>
-    </section>
-
-    <!-- SERVICE CATEGORIES -->
-    <section class="section" id="services">
-      <div class="section-heading">
-        <div>
-          <span class="eyebrow orange-text">EXPLORE FIND-ME</span>
-          <h2>What do you need today?</h2>
-          <p>Choose a category or search for a service.</p>
-        </div>
-      </div>
-
-      <div class="category-grid" id="categoryGrid">
-        <button class="category-card active" type="button" data-category="all">
-          <span class="category-icon">✦</span>
-          <span>All Services</span>
-        </button>
-        <button class="category-card" type="button" data-category="Plumbers">
-          <span class="category-icon">♧</span>
-          <span>Plumbers</span>
-        </button>
-        <button class="category-card" type="button" data-category="Electricians">
-          <span class="category-icon">ϟ</span>
-          <span>Electricians</span>
-        </button>
-        <button class="category-card" type="button" data-category="Mechanics">
-          <span class="category-icon">⚙</span>
-          <span>Mechanics</span>
-        </button>
-        <button class="category-card" type="button" data-category="Appliance Repair">
-          <span class="category-icon">▣</span>
-          <span>Appliance Repair</span>
-        </button>
-        <button class="category-card" type="button" data-category="Cleaning Services">
-          <span class="category-icon">✧</span>
-          <span>Cleaning Services</span>
-        </button>
-        <button class="category-card" type="button" data-category="Phone Repair">
-          <span class="category-icon">▯</span>
-          <span>Phone Repair</span>
-        </button>
-        <button class="category-card" type="button" data-category="Bodaboda">
-          <span class="category-icon">➜</span>
-          <span>Bodaboda</span>
-        </button>
-        <button class="category-card" type="button" data-category="Taxi Services">
-          <span class="category-icon">▰</span>
-          <span>Taxi Services</span>
-        </button>
-        <button class="category-card" type="button" data-category="Welders">
-          <span class="category-icon">⚒</span>
-          <span>Welders</span>
-        </button>
-        <button class="category-card" type="button" data-category="Mama Fua">
-          <span class="category-icon">♧</span>
-          <span>Mama Fua</span>
-        </button>
-        <button class="category-card" type="button" data-category="Tutors">
-          <span class="category-icon">▤</span>
-          <span>Tutors</span>
-        </button>
-        <button class="category-card" type="button" data-category="Delivery Service">
-          <span class="category-icon">➜</span>
-          <span>Delivery Service</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- SERVICE LISTINGS -->
-    <section class="section listings-section" id="listings">
-      <div class="section-heading">
-        <div>
-          <span class="eyebrow orange-text">SERVICE DIRECTORY</span>
-          <h2 id="resultsTitle">Explore service examples</h2>
-          <p id="resultsDescription">
-            Browse services available in your community.
-          </p>
-        </div>
-        <span id="resultsCount" class="results-count">0 results</span>
-      </div>
-
-      <div id="providerResults" class="provider-grid" aria-live="polite">
-        <p class="empty-state">Loading services...</p>
-      </div>
-
-      <p class="demo-notice">
-        Sample listings are for demonstration only and are not verified
-        businesses. Confirm provider details before making arrangements.
+      <button type="button" id="locationButton" class="location-button">
+        📍 Find services near my location
+      </button>
+      <p id="locationStatus" class="status-message" aria-live="polite">
+        Allow location access when your browser asks.
       </p>
     </section>
 
-    <!-- PHONE NUMBER REGISTRATION -->
-    <section class="join-section" id="register">
-      <div class="join-content">
-        <span class="join-label">GROW WITH FIND-ME</span>
-        <h2>Ready to join FIND-ME?</h2>
-        <p>
-          Are you a service provider? Register your business using your
-          phone number and let customers discover your services.
-        </p>
+    <section class="services-section" id="services">
+      <div class="section-heading">
+        <span class="eyebrow">EXPLORE SERVICES</span>
+        <h2>What do you need today?</h2>
+        <p>Choose a category or search for a service.</p>
       </div>
 
-      <form id="providerForm" class="registration-form">
-        <label for="businessName">Business or Provider Name</label>
-        <input
-          type="text"
-          id="businessName"
-          name="businessName"
-          placeholder="Enter your business or full name"
-          autocomplete="organization"
-          maxlength="100"
-          required
-        >
-
-        <label for="businessCategory">Service Category</label>
-        <select
-          id="businessCategory"
-          name="businessCategory"
-          required
-        >
-          <option value="">Choose your service</option>
-          <option value="Plumbers">Plumbers</option>
-          <option value="Electricians">Electricians</option>
-          <option value="Mechanics">Mechanics</option>
-          <option value="Appliance Repair">Appliance Repair</option>
-          <option value="Cleaning Services">Cleaning Services</option>
-          <option value="Phone Repair">Phone Repair</option>
-          <option value="Bodaboda">Bodaboda</option>
-          <option value="Taxi Services">Taxi Services</option>
-          <option value="Welders">Welders</option>
-          <option value="Mama Fua">Mama Fua</option>
-          <option value="Tutors">Tutors</option>
-          <option value="Delivery Service">Delivery Service</option>
-          <option value="Other">Other</option>
-        </select>
-
-        <label for="businessLocation">Town or Estate</label>
-        <input
-          type="text"
-          id="businessLocation"
-          name="businessLocation"
-          placeholder="Enter your town or estate"
-          autocomplete="address-level2"
-          maxlength="100"
-          required
-        >
-
-        <label for="businessPhone">Phone Number</label>
-        <input
-          type="tel"
-          id="businessPhone"
-          name="businessPhone"
-          placeholder="e.g. 0712345678"
-          inputmode="tel"
-          autocomplete="tel"
-          maxlength="16"
-          pattern="[0-9+() -]{9,16}"
-          title="Enter a valid phone number"
-          required
-        >
-
-        <p class="registration-privacy">
-          Provide a phone number where FIND-ME can reach you.
-          Do not enter your PIN or password.
-        </p>
-
-        <button type="submit" class="register-bar">
-          <span>Register My Business</span>
-          <span aria-hidden="true">→</span>
+      <div class="service-grid" id="serviceGrid">
+        <button class="service-card" data-service="Plumber">
+          <span class="service-icon">🔧</span><span>Plumbers</span>
         </button>
+        <button class="service-card" data-service="Electrician">
+          <span class="service-icon">💡</span><span>Electricians</span>
+        </button>
+        <button class="service-card" data-service="Appliance Repair">
+          <span class="service-icon">🛠️</span><span>Appliance Repair</span>
+        </button>
+        <button class="service-card" data-service="Cleaning Services">
+          <span class="service-icon">🧹</span><span>Cleaning Services</span>
+        </button>
+        <button class="service-card" data-service="Phone Repair">
+          <span class="service-icon">📱</span><span>Phone Repair</span>
+        </button>
+        <button class="service-card" data-service="Bodaboda">
+          <span class="service-icon">🏍️</span><span>Bodaboda</span>
+        </button>
+        <button class="service-card" data-service="Taxi">
+          <span class="service-icon">🚕</span><span>Taxi Services</span>
+        </button>
+        <button class="service-card" data-service="Welder">
+          <span class="service-icon">🔩</span><span>Welders</span>
+        </button>
+        <button class="service-card" data-service="Mama Fua">
+          <span class="service-icon">👕</span><span>Mama Fua</span>
+        </button>
+        <button class="service-card" data-service="Tutors">
+          <span class="service-icon">📚</span><span>Tutors</span>
+        </button>
+        <button class="service-card" data-service="Delivery">
+          <span class="service-icon">📦</span><span>Delivery Services</span>
+        </button>
+        <button class="service-card" data-service="Mechanic">
+          <span class="service-icon">🚗</span><span>Mechanics</span>
+        </button>
+        <button class="service-card" data-service="Hospital">
+          <span class="service-icon">🏥</span><span>Hospitals</span>
+        </button>
+        <button class="service-card" data-service="Restaurant">
+          <span class="service-icon">🍽️</span><span>Restaurants</span>
+        </button>
+        <button class="service-card" data-service="Shop">
+          <span class="service-icon">🛍️</span><span>Shops</span>
+        </button>
+      </div>
 
-        <p
-          id="registrationMessage"
-          class="registration-message"
-          role="status"
-          aria-live="polite"
-        ></p>
-      </form>
+      <div id="searchResults" class="search-results" aria-live="polite"></div>
     </section>
 
-    <!-- FEEDBACK -->
-    <section class="feedback-section" id="feedback">
+    <section class="join-section">
       <div>
-        <span class="eyebrow orange-text">WE VALUE YOUR IDEAS</span>
-        <h2>Help us improve FIND-ME</h2>
-        <p>Questions, suggestions or feedback? Send us an email.</p>
+        <span class="eyebrow">GROW YOUR BUSINESS</span>
+        <h2>Ready to join FIND-ME?</h2>
+        <p>Register your business and let more customers discover your services.</p>
       </div>
+      <button type="button" id="openRegistration" class="register-button">
+        Tap to Register Here <span aria-hidden="true">→</span>
+      </button>
+    </section>
 
-      <a
-        class="feedback-link"
-        href="mailto:findme.feedback33@gmail.com"
-      >
-        <span aria-hidden="true">✉</span>
-        findme.feedback33@gmail.com
-      </a>
+    <section class="how-section">
+      <div class="section-heading">
+        <span class="eyebrow">SIMPLE AND CONVENIENT</span>
+        <h2>How FIND-ME works</h2>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <span class="step-number">01</span>
+          <h3>Search</h3>
+          <p>Choose the service you need.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-number">02</span>
+          <h3>Find</h3>
+          <p>Explore services and providers available to you.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-number">03</span>
+          <h3>Connect</h3>
+          <p>Use verified contact details when available to reach a provider.</p>
+        </div>
+      </div>
     </section>
   </main>
 
-  <!-- FOOTER -->
   <footer class="site-footer">
-    <a class="footer-logo" href="#home">FIND-ME</a>
-    <p>Connecting people with local services.</p>
-    <p class="copyright">
-      &copy; <span id="currentYear"></span> FIND-ME. All rights reserved.
+    <a class="footer-logo" href="#">FIND-ME</a>
+    <p>Making it easier to find local services.</p>
+    <p class="feedback-line">
+      Questions or feedback?
+      <a href="mailto:findme.feedback33@gmail.com">
+        findme.feedback33@gmail.com
+      </a>
     </p>
+    <p class="copyright">© <span id="currentYear"></span> FIND-ME. All rights reserved.</p>
   </footer>
+
+  <!-- Registration popup -->
+  <div class="modal-overlay" id="registrationModal"
+       role="dialog" aria-modal="true"
+       aria-labelledby="registrationTitle" hidden>
+    <div class="registration-modal">
+      <button type="button" class="close-modal" id="closeRegistration"
+              aria-label="Close registration">&times;</button>
+
+      <div class="modal-heading">
+        <span class="modal-icon">📝</span>
+        <h2 id="registrationTitle">Register Your Business</h2>
+        <p>Enter your details to request registration on FIND-ME.</p>
+      </div>
+
+      <form id="providerForm">
+        <label for="businessName">Business or provider name</label>
+        <input id="businessName" name="businessName" type="text"
+               placeholder="Enter your business name" required maxlength="100">
+
+        <label for="businessCategory">Service category</label>
+        <select id="businessCategory" name="businessCategory" required>
+          <option value="">Select a service</option>
+          <option>Plumber</option>
+          <option>Electrician</option>
+          <option>Appliance Repair</option>
+          <option>Cleaning Services</option>
+          <option>Phone Repair</option>
+          <option>Bodaboda</option>
+          <option>Taxi Services</option>
+          <option>Welder</option>
+          <option>Mama Fua</option>
+          <option>Tutor</option>
+          <option>Delivery Services</option>
+          <option>Mechanic</option>
+          <option>Hospital</option>
+          <option>Restaurant</option>
+          <option>Shop</option>
+          <option>Other</option>
+        </select>
+
+        <label for="businessLocation">Town or area</label>
+        <input id="businessLocation" name="businessLocation" type="text"
+               placeholder="e.g. Nairobi, Nakuru, Eldama Ravine"
+               required maxlength="100">
+
+        <label for="businessPhone">Phone number</label>
+        <input id="businessPhone" name="businessPhone" type="tel"
+               placeholder="Enter your contact number"
+               required maxlength="25">
+
+        <label for="businessEmail">Email address (optional)</label>
+        <input id="businessEmail" name="businessEmail" type="email"
+               placeholder="you@example.com" maxlength="150">
+
+        <button type="submit" class="primary-button submit-button">
+          Submit Registration Request
+        </button>
+        <p class="privacy-note">
+          Submit only contact information you are comfortable sharing.
+        </p>
+        <p id="registrationMessage" class="form-message" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const searchForm = document.getElementById("searchForm");
+    const serviceSearch = document.getElementById("serviceSearch");
+    const searchResults = document.getElementById("searchResults");
+    const serviceCards = document.querySelectorAll(".service-card");
+    const locationButton = document.getElementById("locationButton");
+    const locationStatus = document.getElementById("locationStatus");
+    const modal = document.getElementById("registrationModal");
+    const openRegistration = document.getElementById("openRegistration");
+    const closeRegistration = document.getElementById("closeRegistration");
+    const providerForm = document.getElementById("providerForm");
+    const registrationMessage = document.getElementById("registrationMessage");
+
+    document.getElementById("currentYear").textContent =
+      new Date().getFullYear();
+
+    function searchServices(term) {
+      const query = term.trim().toLowerCase();
+      let count = 0;
+
+      serviceCards.forEach(function(card) {
+        const matches = !query ||
+          card.dataset.service.toLowerCase().includes(query) ||
+          card.textContent.toLowerCase().includes(query);
+
+        card.hidden = !matches;
+        if (matches) count++;
+      });
+
+      if (!query) {
+        searchResults.textContent = "";
+      } else if (count > 0) {
+        searchResults.textContent =
+          count + " matching service category" +
+          (count === 1 ? "" : "ies") + " found. Choose a category above.";
+      } else {
+        searchResults.textContent =
+          "No matching category found. Try another search.";
+      }
+    }
+
+    searchForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+      searchServices(serviceSearch.value);
+      document.getElementById("services").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    });
+
+    serviceCards.forEach(function(card) {
+      card.addEventListener("click", function() {
+        serviceSearch.value = card.dataset.service;
+        searchServices(card.dataset.service);
+        searchResults.textContent =
+          "You selected " + card.dataset.service +
+          ". Provider listings will appear here when connected to a provider directory.";
+      });
+    });
+
+    locationButton.addEventListener("click", function() {
+      if (!navigator.geolocation) {
+        locationStatus.textContent =
+          "Location is not supported by this browser. Please search by service.";
+        return;
+      }
+
+      locationStatus.textContent = "Requesting your location...";
+
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          locationStatus.textContent =
+            "Location received. Nearby provider listings must be connected to a directory to display results.";
+          locationStatus.dataset.latitude = position.coords.latitude;
+          locationStatus.dataset.longitude = position.coords.longitude;
+        },
+        function() {
+          locationStatus.textContent =
+            "Location access was not granted. Allow it in your browser settings or search by service.";
+        },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+      );
+    });
+
+    function showModal() {
+      modal.hidden = false;
+      document.body.classList.add("modal-open");
+      registrationMessage.textContent = "";
+      document.getElementById("businessName").focus();
+    }
+
+    function hideModal() {
+      modal.hidden = true;
+      document.body.classList.remove("modal-open");
+      openRegistration.focus();
+    }
+
+    openRegistration.addEventListener("click", showModal);
+    closeRegistration.addEventListener("click", hideModal);
+
+    modal.addEventListener("click", function(event) {
+      if (event.target === modal) hideModal();
+    });
+
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Escape" && !modal.hidden) hideModal();
+    });
+
+    providerForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      registrationMessage.textContent =
+        "Your form is ready, but it has NOT been sent or saved online. " +
+        "Connect a secure form service or backend to receive registration details.";
+
+      registrationMessage.className = "form-message warning";
+    });
+  </script>
 
 </body>
 </html>
