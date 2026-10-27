@@ -1,273 +1,425 @@
 
-"use strict";
+/* =====================================================
+   FIND-ME WEBSITE — COMPLETE SCRIPT
+   Search, service categories, location, registration,
+   and approved public business listings.
+   ===================================================== */
 
 document.addEventListener("DOMContentLoaded", function () {
-  const searchForm = document.getElementById("searchForm");
-  const searchInput = document.getElementById("searchInput");
-  const categoryGrid = document.getElementById("categoryGrid");
-  const providerResults = document.getElementById("providerResults");
-  const resultsTitle = document.getElementById("resultsTitle");
-  const resultsDescription = document.getElementById("resultsDescription");
-  const resultsCount = document.getElementById("resultsCount");
-  const locationButton = document.getElementById("locationButton");
-  const locationStatus = document.getElementById("locationStatus");
-  const currentYear = document.getElementById("currentYear");
 
-  currentYear.textContent = new Date().getFullYear();
+  // ---------------------------------------------------
+  // 1. APPROVED PUBLIC BUSINESS LISTINGS
+  // Only add information approved for public display.
+  // ---------------------------------------------------
 
-  // DEMO DATA: Replace these examples with verified providers later.
-  // These are not real business listings or contact details.
-  const providers = [
+  const approvedBusinesses = [
     {
-      name: "Sample Plumbing Service",
-      category: "Plumbers",
-      location: "Nairobi",
-      icon: "♧"
-    },
-    {
-      name: "Sample Electrical Service",
-      category: "Electricians",
-      location: "Nairobi",
-      icon: "ϟ"
-    },
-    {
-      name: "Sample Motor Mechanic",
-      category: "Mechanics",
-      location: "Nairobi",
-      icon: "⚙"
-    },
-    {
-      name: "Sample Appliance Repair",
-      category: "Appliance Repair",
-      location: "Nairobi",
-      icon: "▣"
-    },
-    {
-      name: "Sample Home Cleaning",
-      category: "Cleaning Services",
-      location: "Nairobi",
-      icon: "✧"
-    },
-    {
-      name: "Sample Phone Repair",
-      category: "Phone Repair",
-      location: "Nairobi",
-      icon: "▯"
-    },
-    {
-      name: "Sample Bodaboda Service",
-      category: "Bodaboda",
-      location: "Nairobi",
-      icon: "➜"
-    },
-    {
-      name: "Sample Taxi Service",
+      name: "Pyrex delivery",
       category: "Taxi Services",
-      location: "Nairobi",
-      icon: "▰"
-    },
-    {
-      name: "Sample Welding Service",
-      category: "Welders",
-      location: "Nairobi",
-      icon: "⚒"
-    },
-    {
-      name: "Sample Laundry Service",
-      category: "Mama Fua",
-      location: "Nairobi",
-      icon: "♧"
-    },
-    {
-      name: "Sample Home Tutor",
-      category: "Tutors",
-      location: "Nairobi",
-      icon: "▤"
-    },
-    {
-      name: "Sample Delivery Service",
-      category: "Delivery Service",
-      location: "Nairobi",
-      icon: "➜"
+      area: "Nairobi",
+      phone: "0182000479"
     }
+
+    // Add more approved businesses below.
+    // Separate each business object with a comma.
   ];
 
-  let selectedCategory = "all";
-  let userCoordinates = null;
+  // ---------------------------------------------------
+  // 2. FIND WEBSITE ELEMENTS
+  // ---------------------------------------------------
 
-  function renderProviders() {
-    const query = searchInput.value.trim().toLowerCase();
+  const searchForm = document.getElementById("searchForm");
+  const serviceSearch = document.getElementById("serviceSearch");
+  const searchResults = document.getElementById("searchResults");
+  const serviceGrid = document.getElementById("serviceGrid");
 
-    const filtered = providers.filter(function (provider) {
-      const matchesCategory =
-        selectedCategory === "all" ||
-        provider.category === selectedCategory;
+  const locationButton = document.getElementById("locationButton");
+  const locationStatus = document.getElementById("locationStatus");
 
-      const searchableText = (
-        provider.name + " " +
-        provider.category + " " +
-        provider.location
-      ).toLowerCase();
+  const registrationModal =
+    document.getElementById("registrationModal");
+  const openRegistration =
+    document.getElementById("openRegistration");
+  const closeRegistration =
+    document.getElementById("closeRegistration");
 
-      return matchesCategory && searchableText.includes(query);
-    });
+  const providerForm = document.getElementById("providerForm");
+  const registrationMessage =
+    document.getElementById("registrationMessage");
 
-    providerResults.replaceChildren();
-    resultsCount.textContent =
-      filtered.length + (filtered.length === 1 ? " result" : " results");
+  // ---------------------------------------------------
+  // 3. CURRENT YEAR
+  // ---------------------------------------------------
 
-    if (query) {
-      resultsTitle.textContent = "Search results";
-      resultsDescription.textContent =
-        'Showing demo listings matching "' + searchInput.value.trim() + '".';
-    } else if (selectedCategory !== "all") {
-      resultsTitle.textContent = selectedCategory;
-      resultsDescription.textContent =
-        "Explore sample listings in this category.";
+  const currentYear = document.getElementById("currentYear");
+
+  if (currentYear) {
+    currentYear.textContent = new Date().getFullYear();
+  }
+
+  // ---------------------------------------------------
+  // 4. CREATE APPROVED BUSINESS LISTING SECTION
+  // ---------------------------------------------------
+
+  let approvedGrid = document.getElementById(
+    "approvedBusinessesGrid"
+  );
+
+  if (!approvedGrid) {
+    const approvedSection = document.createElement("section");
+    approvedSection.className = "approved-businesses-section";
+    approvedSection.id = "approved-businesses";
+
+    const heading = document.createElement("div");
+    heading.className = "section-heading";
+
+    const eyebrow = document.createElement("span");
+    eyebrow.className = "eyebrow";
+    eyebrow.textContent = "APPROVED LISTINGS";
+
+    const title = document.createElement("h2");
+    title.textContent = "Find a Service Provider";
+
+    const description = document.createElement("p");
+    description.textContent =
+      "Explore publicly approved local business listings.";
+
+    heading.append(eyebrow, title, description);
+
+    approvedGrid = document.createElement("div");
+    approvedGrid.id = "approvedBusinessesGrid";
+    approvedGrid.className = "approved-businesses-grid";
+
+    approvedSection.append(heading, approvedGrid);
+
+    const servicesSection = document.getElementById("services");
+
+    if (servicesSection) {
+      servicesSection.insertAdjacentElement(
+        "afterend",
+        approvedSection
+      );
     } else {
-      resultsTitle.textContent = "Explore service examples";
-      resultsDescription.textContent =
-        "These sample listings help you test the website.";
+      document.querySelector("main")?.appendChild(approvedSection);
     }
+  }
 
-    if (filtered.length === 0) {
-      const message = document.createElement("p");
-      message.className = "empty-state";
-      message.textContent =
-        "No matching demo listings found. Try another service or category.";
-      providerResults.appendChild(message);
+  // ---------------------------------------------------
+  // 5. DISPLAY APPROVED BUSINESS CARDS
+  // ---------------------------------------------------
+
+  function renderApprovedServices() {
+    if (!approvedGrid) return;
+
+    approvedGrid.replaceChildren();
+
+    if (approvedBusinesses.length === 0) {
+      const emptyMessage = document.createElement("p");
+      emptyMessage.textContent =
+        "No approved business listings are available yet.";
+      approvedGrid.appendChild(emptyMessage);
       return;
     }
 
-    filtered.forEach(function (provider) {
+    approvedBusinesses.forEach(function (business) {
       const card = document.createElement("article");
-      card.className = "provider-card";
+      card.className = "business-card";
 
-      const top = document.createElement("div");
-      top.className = "provider-card-top";
-
-      const symbol = document.createElement("div");
-      symbol.className = "provider-symbol";
-      symbol.setAttribute("aria-hidden", "true");
-      symbol.textContent = provider.icon;
-
-      const titleArea = document.createElement("div");
+      const category = document.createElement("span");
+      category.className = "badge-category";
+      category.textContent = business.category || "Local Service";
 
       const name = document.createElement("h3");
-      name.textContent = provider.name;
+      name.textContent = business.name || "Business";
 
-      const category = document.createElement("p");
-      category.className = "provider-category";
-      category.textContent = provider.category;
+      const area = document.createElement("p");
+      area.className = "location-text";
+      area.textContent = "📍 " + (business.area || "Area not provided");
 
-      titleArea.appendChild(name);
-      titleArea.appendChild(category);
-      top.appendChild(symbol);
-      top.appendChild(titleArea);
+      card.append(category, name, area);
 
-      const location = document.createElement("p");
-      location.className = "provider-location";
-      location.textContent = "⌖ " + provider.location;
+      if (business.phone) {
+        const callButton = document.createElement("a");
+        callButton.className = "call-btn";
 
-      const badge = document.createElement("span");
-      badge.className = "demo-badge";
-      badge.textContent = "Demo listing";
+        const safePhone = String(business.phone).replace(
+          /[^\d+]/g,
+          ""
+        );
 
-      card.appendChild(top);
-      card.appendChild(location);
-      card.appendChild(badge);
+        callButton.href = "tel:" + safePhone;
+        callButton.textContent =
+          "📞 Call Now: " + business.phone;
 
-      providerResults.appendChild(card);
+        card.appendChild(callButton);
+      }
+
+      approvedGrid.appendChild(card);
     });
   }
 
-  searchForm.addEventListener("submit", function (event) {
-    event.preventDefault();
-    renderProviders();
-    document.getElementById("listings").scrollIntoView({
-      behavior: "smooth",
-      block: "start"
+  renderApprovedServices();
+
+  // ---------------------------------------------------
+  // 6. SEARCH SERVICE CATEGORIES AND BUSINESS LISTINGS
+  // ---------------------------------------------------
+
+  function performSearch(searchTerm) {
+    const query = searchTerm.trim().toLowerCase();
+    let matchingCategories = 0;
+    let matchingBusinesses = 0;
+
+    const categoryCards = document.querySelectorAll(
+      "#serviceGrid .service-card"
+    );
+
+    categoryCards.forEach(function (card) {
+      const category = (
+        card.dataset.service || card.textContent
+      ).toLowerCase();
+
+      const matches = !query || category.includes(query);
+
+      card.hidden = !matches;
+
+      if (matches) matchingCategories++;
     });
-  });
 
-  searchInput.addEventListener("input", renderProviders);
+    const businessCards = document.querySelectorAll(
+      "#approvedBusinessesGrid .business-card"
+    );
 
-  categoryGrid.addEventListener("click", function (event) {
-    const button = event.target.closest("[data-category]");
+    businessCards.forEach(function (card) {
+      const matches = !query ||
+        card.textContent.toLowerCase().includes(query);
 
-    if (!button) return;
+      card.hidden = !matches;
 
-    selectedCategory = button.dataset.category;
-
-    categoryGrid.querySelectorAll("[data-category]").forEach(function (item) {
-      const isSelected = item === button;
-      item.classList.toggle("active", isSelected);
-      item.setAttribute("aria-pressed", String(isSelected));
+      if (matches) matchingBusinesses++;
     });
 
-    renderProviders();
+    if (!searchResults) return;
 
-    document.getElementById("listings").scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  });
-
-  locationButton.addEventListener("click", function () {
-    // Once location is available, a second tap opens a map nearby.
-    if (userCoordinates) {
-      const url =
-        "https://www.google.com/maps/search/services/@" +
-        userCoordinates.latitude + "," +
-        userCoordinates.longitude + ",14z";
-
-      window.open(url, "_blank", "noopener,noreferrer");
-      return;
+    if (!query) {
+      searchResults.textContent = "";
+    } else if (matchingCategories + matchingBusinesses > 0) {
+      searchResults.textContent =
+        "Found " + matchingCategories + " matching service categories and " +
+        matchingBusinesses + " matching business listings.";
+    } else {
+      searchResults.textContent =
+        "No matches found. Try another service or area.";
     }
+  }
 
-    if (!("geolocation" in navigator)) {
-      locationStatus.textContent =
-        "Location is not supported by this browser. You can still search services.";
-      return;
-    }
+  if (searchForm && serviceSearch) {
+    searchForm.addEventListener("submit", function (event) {
+      event.preventDefault();
 
-    locationButton.disabled = true;
-    locationStatus.textContent = "Waiting for location permission...";
+      performSearch(serviceSearch.value);
 
-    navigator.geolocation.getCurrentPosition(
-      function (position) {
-        userCoordinates = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude
-        };
+      const servicesSection = document.getElementById("services");
 
-        locationStatus.textContent =
-          "Location received. Tap below to open a map near you.";
+      if (servicesSection) {
+        servicesSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+    });
 
-        locationButton.textContent = "Open Nearby Map";
-        locationButton.disabled = false;
-      },
-      function (error) {
-        locationButton.disabled = false;
+    serviceSearch.addEventListener("input", function () {
+      if (serviceSearch.value.trim() === "") {
+        performSearch("");
+      }
+    });
+  }
 
-        if (error.code === error.PERMISSION_DENIED) {
+  // ---------------------------------------------------
+  // 7. SERVICE CATEGORY BUTTONS
+  // ---------------------------------------------------
+
+  if (serviceGrid) {
+    serviceGrid.addEventListener("click", function (event) {
+      const card = event.target.closest(".service-card");
+
+      if (!card) return;
+
+      const selectedService =
+        card.dataset.service || card.textContent.trim();
+
+      if (serviceSearch) {
+        serviceSearch.value = selectedService;
+      }
+
+      performSearch(selectedService);
+
+      if (searchResults) {
+        searchResults.textContent =
+          "Selected " + selectedService +
+          ". Matching approved listings are shown below when available.";
+      }
+
+      const approvedSection =
+        document.getElementById("approved-businesses");
+
+      if (approvedSection) {
+        approvedSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+    });
+  }
+
+  // ---------------------------------------------------
+  // 8. LOCATION BUTTON
+  // ---------------------------------------------------
+
+  if (locationButton) {
+    locationButton.addEventListener("click", function () {
+      if (!navigator.geolocation) {
+        if (locationStatus) {
           locationStatus.textContent =
-            "Location permission was denied. Allow it in your browser settings to try again.";
-        } else if (error.code === error.TIMEOUT) {
-          locationStatus.textContent =
-            "Location took too long. Try again in an area with a better signal.";
-        } else {
-          locationStatus.textContent =
-            "Unable to get your location. Check your phone settings and try again.";
+            "Your browser does not support location. Please search by service or town.";
         }
-      },
-      {
-        enableHighAccuracy: false,
-        timeout: 15000,
-        maximumAge: 60000
+        return;
+      }
+
+      if (locationStatus) {
+        locationStatus.textContent =
+          "Requesting your location. Please respond to the browser permission prompt.";
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+
+          if (locationStatus) {
+            locationStatus.textContent =
+              "Location received. Your coordinates are available, but nearby search requires a connected location-based provider directory.";
+          }
+
+          // Coordinates are not sent or saved by this script.
+          // A backend is required for real nearby-provider searches.
+          console.info(
+            "FIND-ME location received:",
+            latitude,
+            longitude
+          );
+        },
+
+        function () {
+          if (locationStatus) {
+            locationStatus.textContent =
+              "Location access was not granted. Enable location permission or search by town.";
+          }
+        },
+
+        {
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 60000
+        }
+      );
+    });
+  }
+
+  // ---------------------------------------------------
+  // 9. REGISTRATION POPUP
+  // ---------------------------------------------------
+
+  function showRegistrationModal() {
+    if (!registrationModal) return;
+
+    registrationModal.hidden = false;
+    document.body.classList.add("modal-open");
+
+    if (registrationMessage) {
+      registrationMessage.textContent = "";
+      registrationMessage.className = "form-message";
+    }
+
+    const businessName =
+      document.getElementById("businessName");
+
+    if (businessName) businessName.focus();
+  }
+
+  function hideRegistrationModal() {
+    if (!registrationModal) return;
+
+    registrationModal.hidden = true;
+    document.body.classList.remove("modal-open");
+
+    if (openRegistration) {
+      openRegistration.focus();
+    }
+  }
+
+  if (openRegistration) {
+    openRegistration.addEventListener(
+      "click",
+      showRegistrationModal
+    );
+  }
+
+  if (closeRegistration) {
+    closeRegistration.addEventListener(
+      "click",
+      hideRegistrationModal
+    );
+  }
+
+  if (registrationModal) {
+    registrationModal.addEventListener(
+      "click",
+      function (event) {
+        if (event.target === registrationModal) {
+          hideRegistrationModal();
+        }
       }
     );
+  }
+
+  document.addEventListener("keydown", function (event) {
+    if (
+      event.key === "Escape" &&
+      registrationModal &&
+      !registrationModal.hidden
+    ) {
+      hideRegistrationModal();
+    }
   });
 
-  renderProviders();
+  // ---------------------------------------------------
+  // 10. REGISTRATION FORM VALIDATION AND MESSAGE
+  // ---------------------------------------------------
+
+  if (providerForm) {
+    providerForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      if (!providerForm.reportValidity()) return;
+
+      if (registrationMessage) {
+        registrationMessage.textContent =
+          "Your details have been checked in this browser, but they have NOT been sent or saved online. A secure backend or connected form service is required to receive your registration.";
+
+        registrationMessage.className =
+          "form-message warning";
+      }
+    });
+  }
+
+  // ---------------------------------------------------
+  // 11. STARTUP MESSAGE
+  // ---------------------------------------------------
+
+  console.info(
+    "FIND-ME loaded successfully. Approved public listings:",
+    approvedBusinesses.length
+  );
+
 });
