@@ -1043,3 +1043,63 @@ a:focus-visible {
     font-size: 16px !important;
   }
 }
+
+/* FIND-ME branded header background */
+.site-header {
+  position: relative;
+  background:
+    linear-gradient(
+      rgba(255, 255, 255, 0.88),
+      rgba(255, 255, 255, 0.88)
+    ),
+    url("findme-background.jpg") center 45% / cover no-repeat;
+  border-bottom: 2px solid #f47721;
+}
+
+/* Keep header text readable */
+.site-header .logo,
+.site-header .header-link {
+  position: relative;
+  z-index: 1;
+}
+
+/* FIND-ME branded footer background */
+.site-footer {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: #ffffff;
+  color: #222222;
+  padding: 45px 20px;
+  text-align: center;
+}
+
+/* Faded logo image behind footer content */
+.site-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("findme-background.jpg") center 48% / cover no-repeat;
+  opacity: 0.13;
+  z-index: -1;
+}
+
+/* Footer text stays visible */
+.site-footer .footer-logo {
+  color: #12365b;
+  position: relative;
+}
+
+.site-footer p {
+  color: #444444;
+  position: relative;
+}
+
+/* Highlight the FIND-ME brand colours */
+.site-footer .footer-logo {
+  color: #f47721;
+}
+
+.site-footer .copyright {
+  color: #555555;
+}
