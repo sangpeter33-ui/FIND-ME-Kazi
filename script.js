@@ -1,15 +1,16 @@
 
 /* =====================================================
    FIND-ME WEBSITE — COMPLETE SCRIPT
-   Search, service categories, location, registration,
-   and approved public business listings.
+   Search, categories, location, registration popup,
+   Web3Forms submissions, and approved public listings.
    ===================================================== */
 
 document.addEventListener("DOMContentLoaded", function () {
 
   // ---------------------------------------------------
   // 1. APPROVED PUBLIC BUSINESS LISTINGS
-  // Only add information approved for public display.
+  // Only publish information approved for public display.
+  // Add new businesses here only after reviewing them.
   // ---------------------------------------------------
 
   const approvedBusinesses = [
@@ -20,8 +21,8 @@ document.addEventListener("DOMContentLoaded", function () {
       phone: "0182000479"
     }
 
-    // Add more approved businesses below.
-    // Separate each business object with a comma.
+    // Add other approved businesses here.
+    // Separate business objects with commas.
   ];
 
   // ---------------------------------------------------
@@ -58,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ---------------------------------------------------
-  // 4. CREATE APPROVED BUSINESS LISTING SECTION
+  // 4. APPROVED BUSINESS LISTINGS CONTAINER
   // ---------------------------------------------------
 
   let approvedGrid = document.getElementById(
@@ -82,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const description = document.createElement("p");
     description.textContent =
-      "Explore publicly approved local business listings.";
+      "Browse publicly approved local business listings.";
 
     heading.append(eyebrow, title, description);
 
@@ -100,7 +101,9 @@ document.addEventListener("DOMContentLoaded", function () {
         approvedSection
       );
     } else {
-      document.querySelector("main")?.appendChild(approvedSection);
+      const main = document.querySelector("main");
+
+      if (main) main.appendChild(approvedSection);
     }
   }
 
@@ -117,6 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const emptyMessage = document.createElement("p");
       emptyMessage.textContent =
         "No approved business listings are available yet.";
+
       approvedGrid.appendChild(emptyMessage);
       return;
     }
@@ -134,7 +138,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const area = document.createElement("p");
       area.className = "location-text";
-      area.textContent = "📍 " + (business.area || "Area not provided");
+      area.textContent =
+        "📍 " + (business.area || "Area not provided");
 
       card.append(category, name, area);
 
@@ -161,11 +166,12 @@ document.addEventListener("DOMContentLoaded", function () {
   renderApprovedServices();
 
   // ---------------------------------------------------
-  // 6. SEARCH SERVICE CATEGORIES AND BUSINESS LISTINGS
+  // 6. SEARCH CATEGORIES AND APPROVED BUSINESSES
   // ---------------------------------------------------
 
   function performSearch(searchTerm) {
-    const query = searchTerm.trim().toLowerCase();
+    const query = String(searchTerm || "").trim().toLowerCase();
+
     let matchingCategories = 0;
     let matchingBusinesses = 0;
 
@@ -190,8 +196,8 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     businessCards.forEach(function (card) {
-      const matches = !query ||
-        card.textContent.toLowerCase().includes(query);
+      const matches =
+        !query || card.textContent.toLowerCase().includes(query);
 
       card.hidden = !matches;
 
@@ -204,7 +210,8 @@ document.addEventListener("DOMContentLoaded", function () {
       searchResults.textContent = "";
     } else if (matchingCategories + matchingBusinesses > 0) {
       searchResults.textContent =
-        "Found " + matchingCategories + " matching service categories and " +
+        "Found " + matchingCategories +
+        " matching service categories and " +
         matchingBusinesses + " matching business listings.";
     } else {
       searchResults.textContent =
@@ -229,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     serviceSearch.addEventListener("input", function () {
-      if (serviceSearch.value.trim() === "") {
+      if (!serviceSearch.value.trim()) {
         performSearch("");
       }
     });
@@ -257,7 +264,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (searchResults) {
         searchResults.textContent =
           "Selected " + selectedService +
-          ". Matching approved listings are shown below when available.";
+          ". Matching approved listings are shown when available.";
       }
 
       const approvedSection =
@@ -274,6 +281,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ---------------------------------------------------
   // 8. LOCATION BUTTON
+  // Requests location permission but does not save it.
+  // Real nearby search needs a connected provider directory.
   // ---------------------------------------------------
 
   if (locationButton) {
@@ -281,8 +290,9 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!navigator.geolocation) {
         if (locationStatus) {
           locationStatus.textContent =
-            "Your browser does not support location. Please search by service or town.";
+            "Your browser does not support location. Search by service or town instead.";
         }
+
         return;
       }
 
@@ -298,11 +308,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
           if (locationStatus) {
             locationStatus.textContent =
-              "Location received. Your coordinates are available, but nearby search requires a connected location-based provider directory.";
+              "Location received. Nearby provider search is not yet connected to a location-based directory.";
           }
 
-          // Coordinates are not sent or saved by this script.
-          // A backend is required for real nearby-provider searches.
+          // Coordinates are not sent to a server or saved.
           console.info(
             "FIND-ME location received:",
             latitude,
@@ -394,21 +403,105 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // ---------------------------------------------------
-  // 10. REGISTRATION FORM VALIDATION AND MESSAGE
+  // 10. WEB3FORMS REGISTRATION SUBMISSION
+  // The access key is read from the hidden input in HTML.
+  // Requests are emailed; they are not auto-approved.
   // ---------------------------------------------------
 
   if (providerForm) {
-    providerForm.addEventListener("submit", function (event) {
+    providerForm.addEventListener("submit", async function (event) {
       event.preventDefault();
 
       if (!providerForm.reportValidity()) return;
 
+      const submitButton = providerForm.querySelector(
+        'button[type="submit"]'
+      );
+
+      if (submitButton && submitButton.disabled) return;
+
+      const accessKeyInput = providerForm.querySelector(
+        'input[name="access_key"]'
+      );
+
+      if (
+        !accessKeyInput ||
+        !accessKeyInput.value.trim() ||
+        accessKeyInput.value.includes("YOUR_ACCESS_KEY_HERE")
+      ) {
+        if (registrationMessage) {
+          registrationMessage.textContent =
+            "Registration is not configured yet. Please contact FIND-ME feedback support.";
+          registrationMessage.className = "form-message error";
+        }
+
+        return;
+      }
+
+      const originalButtonText = submitButton
+        ? submitButton.textContent
+        : "";
+
       if (registrationMessage) {
         registrationMessage.textContent =
-          "Your details have been checked in this browser, but they have NOT been sent or saved online. A secure backend or connected form service is required to receive your registration.";
+          "Sending your registration request...";
+        registrationMessage.className = "form-message";
+      }
 
-        registrationMessage.className =
-          "form-message warning";
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Sending...";
+      }
+
+      try {
+        const formData = new FormData(providerForm);
+
+        const response = await fetch(
+          "https://api.web3forms.com/submit",
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+
+        let result;
+
+        try {
+          result = await response.json();
+        } catch {
+          throw new Error("The form service returned an unreadable response.");
+        }
+
+        if (!response.ok || !result.success) {
+          throw new Error(
+            result.message || "The form service rejected the submission."
+          );
+        }
+
+        if (registrationMessage) {
+          registrationMessage.textContent =
+            "Thank you! Your registration request was sent successfully. FIND-ME will review your details before any public listing is approved.";
+
+          registrationMessage.className = "form-message success";
+        }
+
+        providerForm.reset();
+
+      } catch (error) {
+        console.error("FIND-ME registration error:", error);
+
+        if (registrationMessage) {
+          registrationMessage.textContent =
+            "Sorry, your request could not be sent. Check your internet connection and try again. If the problem continues, contact findme.feedback33@gmail.com.";
+
+          registrationMessage.className = "form-message error";
+        }
+
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = originalButtonText;
+        }
       }
     });
   }
