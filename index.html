@@ -21,6 +21,7 @@
   </header>
 
   <main>
+    <!-- HERO SECTION -->
     <section class="hero" id="home">
       <div class="hero-content">
         <span class="eyebrow">YOUR LOCAL SERVICE DIRECTORY</span>
@@ -59,6 +60,7 @@
           </button>
         </div>
       </div>
+
       <div class="hero-decoration" aria-hidden="true">
         <span>F</span>
         <span>+</span>
@@ -66,6 +68,7 @@
       </div>
     </section>
 
+    <!-- SERVICE CATEGORIES -->
     <section class="section" id="services">
       <div class="section-heading">
         <div>
@@ -131,13 +134,14 @@
       </div>
     </section>
 
+    <!-- SERVICE LISTINGS -->
     <section class="section listings-section" id="listings">
       <div class="section-heading">
         <div>
           <span class="eyebrow orange-text">SERVICE DIRECTORY</span>
           <h2 id="resultsTitle">Explore service examples</h2>
           <p id="resultsDescription">
-            These sample listings help you test the website.
+            Browse services available in your community.
           </p>
         </div>
         <span id="resultsCount" class="results-count">0 results</span>
@@ -146,47 +150,126 @@
       <div id="providerResults" class="provider-grid" aria-live="polite">
         <p class="empty-state">Loading services...</p>
       </div>
+
       <p class="demo-notice">
-        Demo listings only. These are examples, not verified businesses.
-        Contact details will appear when genuine providers are added.
+        Sample listings are for demonstration only and are not verified
+        businesses. Confirm provider details before making arrangements.
       </p>
     </section>
 
+    <!-- PHONE NUMBER REGISTRATION -->
     <section class="join-section" id="register">
       <div class="join-content">
         <span class="join-label">GROW WITH FIND-ME</span>
         <h2>Ready to join FIND-ME?</h2>
         <p>
-          Are you a service provider? Get in touch to ask about listing
-          your business in our directory.
+          Are you a service provider? Register your business using your
+          phone number and let customers discover your services.
         </p>
       </div>
-      <a
-        class="register-bar"
-        href="mailto:findme.feedback33@gmail.com?subject=FIND-ME%20Provider%20Registration&body=Hello%20FIND-ME%2C%0A%0AI%20would%20like%20to%20register%20my%20business.%0A%0ABusiness%20name%3A%0AService%20category%3A%0ALocation%3A%0APhone%20number%3A%0A%0AThank%20you."
-      >
-        <span class="register-icon">＋</span>
-        <span>Tap to Register Here</span>
-        <span class="register-arrow">→</span>
-      </a>
+
+      <form id="providerForm" class="registration-form">
+        <label for="businessName">Business or Provider Name</label>
+        <input
+          type="text"
+          id="businessName"
+          name="businessName"
+          placeholder="Enter your business or full name"
+          autocomplete="organization"
+          maxlength="100"
+          required
+        >
+
+        <label for="businessCategory">Service Category</label>
+        <select
+          id="businessCategory"
+          name="businessCategory"
+          required
+        >
+          <option value="">Choose your service</option>
+          <option value="Plumbers">Plumbers</option>
+          <option value="Electricians">Electricians</option>
+          <option value="Mechanics">Mechanics</option>
+          <option value="Appliance Repair">Appliance Repair</option>
+          <option value="Cleaning Services">Cleaning Services</option>
+          <option value="Phone Repair">Phone Repair</option>
+          <option value="Bodaboda">Bodaboda</option>
+          <option value="Taxi Services">Taxi Services</option>
+          <option value="Welders">Welders</option>
+          <option value="Mama Fua">Mama Fua</option>
+          <option value="Tutors">Tutors</option>
+          <option value="Delivery Service">Delivery Service</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <label for="businessLocation">Town or Estate</label>
+        <input
+          type="text"
+          id="businessLocation"
+          name="businessLocation"
+          placeholder="Enter your town or estate"
+          autocomplete="address-level2"
+          maxlength="100"
+          required
+        >
+
+        <label for="businessPhone">Phone Number</label>
+        <input
+          type="tel"
+          id="businessPhone"
+          name="businessPhone"
+          placeholder="e.g. 0712345678"
+          inputmode="tel"
+          autocomplete="tel"
+          maxlength="16"
+          pattern="[0-9+() -]{9,16}"
+          title="Enter a valid phone number"
+          required
+        >
+
+        <p class="registration-privacy">
+          Provide a phone number where FIND-ME can reach you.
+          Do not enter your PIN or password.
+        </p>
+
+        <button type="submit" class="register-bar">
+          <span>Register My Business</span>
+          <span aria-hidden="true">→</span>
+        </button>
+
+        <p
+          id="registrationMessage"
+          class="registration-message"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </form>
+
       <p class="register-note">
-        Your email app will open so you can send your registration request.
+        Registration details must be connected to a secure service
+        before they can be saved online.
       </p>
     </section>
 
-    <section class="feedback-section">
+    <!-- FEEDBACK -->
+    <section class="feedback-section" id="feedback">
       <div>
         <span class="eyebrow orange-text">WE VALUE YOUR IDEAS</span>
         <h2>Help us improve FIND-ME</h2>
         <p>Questions, suggestions or feedback? Send us an email.</p>
       </div>
-      <a class="feedback-link" href="mailto:findme.feedback33@gmail.com">
+
+      <a
+        class="feedback-link"
+        href="mailto:findme.feedback33@gmail.com"
+      >
         <span aria-hidden="true">✉</span>
         findme.feedback33@gmail.com
       </a>
     </section>
   </main>
 
+  <!-- FOOTER -->
   <footer class="site-footer">
     <a class="footer-logo" href="#home">FIND-ME</a>
     <p>Connecting people with local services.</p>
@@ -197,4 +280,3 @@
 
 </body>
 </html>
-
