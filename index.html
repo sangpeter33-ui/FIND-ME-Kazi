@@ -148,7 +148,6 @@
     </section>
 
     <!-- APPROVED BUSINESS LISTINGS -->
-    <!-- script.js fills this section with approved businesses -->
     <section class="approved-businesses-section" id="approved-businesses">
       <div class="section-heading">
         <span class="eyebrow">APPROVED LISTINGS</span>
@@ -214,10 +213,9 @@
 
   </main>
 
-  <!-- FOOTER AND FEEDBACK EMAIL -->
+  <!-- FOOTER -->
   <footer class="site-footer">
     <a class="footer-logo" href="#">FIND-ME</a>
-
     <p>Making it easier to find local services.</p>
 
     <p class="feedback-line">
@@ -256,12 +254,30 @@
         <p>Submit your details to request a place on FIND-ME.</p>
       </div>
 
-      <form id="<form id="providerForm">
-  <input
-    type="hidden"
-    name="access_key"
-    value="c03d37ca-27dc-4a67-b56d-107f5eb94232"
-  ">
+      <!-- WEB3FORMS REGISTRATION FORM -->
+      <form
+        id="providerForm"
+        action="https://api.web3forms.com/submit"
+        method="POST"
+      >
+
+        <input
+          type="hidden"
+          name="access_key"
+          value="c03d37ca-27dc-4a67-b56d-107f5eb94232"
+        >
+
+        <input
+          type="hidden"
+          name="subject"
+          value="New FIND-ME Business Registration"
+        >
+
+        <input
+          type="hidden"
+          name="from_name"
+          value="FIND-ME Website"
+        >
 
         <label for="businessName">Business or provider name</label>
         <input
@@ -274,7 +290,11 @@
         >
 
         <label for="businessCategory">Service category</label>
-        <select id="businessCategory" name="businessCategory" required>
+        <select
+          id="businessCategory"
+          name="businessCategory"
+          required
+        >
           <option value="">Select a service</option>
           <option>Plumber</option>
           <option>Electrician</option>
@@ -323,6 +343,16 @@
           maxlength="150"
         >
 
+        <!-- Honeypot spam protection field -->
+        <input
+          type="checkbox"
+          name="botcheck"
+          class="hidden"
+          style="display:none"
+          tabindex="-1"
+          autocomplete="off"
+        >
+
         <button
           type="submit"
           class="primary-button submit-button"
@@ -331,7 +361,8 @@
         </button>
 
         <p class="privacy-note">
-          Only provide information you are comfortable sharing.
+          By submitting, you request consideration for a FIND-ME listing.
+          Your listing is not automatically approved.
         </p>
 
         <p
@@ -344,7 +375,7 @@
     </div>
   </div>
 
-  <!-- LOAD THE SEPARATE JAVASCRIPT FILE ONCE -->
+  <!-- JAVASCRIPT -->
   <script src="script.js"></script>
 
 </body>
