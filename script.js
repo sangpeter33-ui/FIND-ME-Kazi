@@ -1,442 +1,625 @@
 
-/* =====================================================
-   FIND-ME WEBSITE — UPDATED SCRIPT
-   Search, categories, location, registration popup,
-   Web3Forms submissions and approved public listings.
-   ===================================================== */
+/* =========================================================
+   FIND-ME — COMPLETE WEBSITE SCRIPT
+   Registration popup, Web3Forms, GPS, search and categories
+   ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
+  "use strict";
 
-  // 1. APPROVED PUBLIC BUSINESS LISTINGS
-  // Publish only businesses approved for public display.
-  const approvedBusinesses = [
-    {
-      name: "Pyrex delivery",
-      category: "Taxi Services",
-      area: "Nairobi",
-      phone: "0182000479"
-    }
-  ];
+  // -------------------------------------------------------
+  // 1. WEB3FORMS CONFIGURATION
+  // -------------------------------------------------------
 
-  // 2. PAGE ELEMENTS
-  const searchForm = document.getElementById("searchForm");
-  const serviceSearch = document.getElementById("serviceSearch");
-  const searchResults = document.getElementById("searchResults");
-  const serviceGrid = document.getElementById("serviceGrid");
+  const WEB3FORMS_ACCESS_KEY =
+    "c03d37ca-27dc-4a67-b56d-107f5eb94232";
 
-  const locationButton = document.getElementById("locationButton");
-  const locationStatus = document.getElementById("locationStatus");
+  const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
 
-  const registrationModal = document.getElementById("registrationModal");
+  // -------------------------------------------------------
+  // 2. FIND HTML ELEMENTS
+  // -------------------------------------------------------
+
   const openRegistration = document.getElementById("openRegistration");
+  const registrationModal = document.getElementById("registrationModal");
   const closeRegistration = document.getElementById("closeRegistration");
 
   const providerForm = document.getElementById("providerForm");
   const registrationMessage = document.getElementById("registrationMessage");
+  const submitRegistration = document.getElementById("submitRegistration");
 
-  const currentYear = document.getElementById("currentYear");
+  const getBusinessLocation = document.getElementById("getBusinessLocation");
+  const locationStatus = document.getElementById("locationStatus");
+  const gpsMapPreview = document.getElementById("gpsMapPreview");
 
-  if (currentYear) {
-    currentYear.textContent = new Date().getFullYear();
-  }
+  const gpsLatitude = document.getElementById("phoneGPSLatitude");
+  const gpsLongitude = document.getElementById("phoneGPSLongitude");
+  const gpsAccuracy = document.getElementById("phoneGPSAccuracy");
+  const gpsMapLink = document.getElementById("phoneGPSMapLink");
 
-  // 3. DISPLAY APPROVED BUSINESS LISTINGS
-  const approvedGrid = document.getElementById("approvedBusinessesGrid");
+  const locationConsent = document.getElementById("locationConsent");
 
-  function renderApprovedServices() {
-    if (!approvedGrid) return;
+  const searchForm = document.getElementById("searchForm");
+  const searchInput = document.getElementById("searchInput");
+  const searchLocation = document.getElementById("searchLocation");
+  const searchResults = document.getElementById("searchResults");
 
-    approvedGrid.replaceChildren();
+  const serviceGrid = document.getElementById("serviceGrid");
+  const approvedBusinessesGrid =
+    document.getElementById("approvedBusinessesGrid");
 
-    if (approvedBusinesses.length === 0) {
-      const message = document.createElement("p");
-      message.textContent =
-        "No approved business listings are available yet.";
-      approvedGrid.appendChild(message);
+  // -------------------------------------------------------
+  // 3. REGISTRATION POPUP
+  // -------------------------------------------------------
+
+  function showRegistration() {
+    if (!registrationModal) {
+      console.error("FIND-ME: registrationModal was not found.");
       return;
     }
 
-    approvedBusinesses.forEach(function (business) {
-      const card = document.createElement("article");
-      card.className = "business-card";
+    registrationModal.classList.add("is-open");
+    registrationModal.setAttribute("aria-hidden", "false");
 
-      const category = document.createElement("span");
-      category.className = "badge-category";
-      category.textContent = business.category || "Local Service";
+    document.body.classList.add("registration-open");
 
-      const name = document.createElement("h3");
-      name.textContent = business.name || "Business";
+    const firstField = document.getElementById("businessName");
 
-      const area = document.createElement("p");
-      area.className = "location-text";
-      area.textContent = "📍 " + (business.area || "Area not provided");
-
-      card.append(category, name, area);
-
-      if (business.phone) {
-        const callButton = document.createElement("a");
-        callButton.className = "call-btn";
-
-        const safePhone = String(business.phone).replace(/[^\d+]/g, "");
-        callButton.href = "tel:" + safePhone;
-        callButton.textContent = "📞 Call Now: " + business.phone;
-
-        card.appendChild(callButton);
-      }
-
-      approvedGrid.appendChild(card);
-    });
-  }
-
-  renderApprovedServices();
-
-  // 4. SEARCH CATEGORIES AND APPROVED BUSINESSES
-  function performSearch(searchTerm) {
-    const query = String(searchTerm || "").trim().toLowerCase();
-    let matchingCategories = 0;
-    let matchingBusinesses = 0;
-
-    document.querySelectorAll("#serviceGrid .service-card")
-      .forEach(function (card) {
-        const category = (
-          card.dataset.service || card.textContent
-        ).toLowerCase();
-
-        const matches = !query || category.includes(query);
-        card.hidden = !matches;
-
-        if (matches) matchingCategories++;
-      });
-
-    document.querySelectorAll(
-      "#approvedBusinessesGrid .business-card"
-    ).forEach(function (card) {
-      const matches = !query ||
-        card.textContent.toLowerCase().includes(query);
-
-      card.hidden = !matches;
-
-      if (matches) matchingBusinesses++;
-    });
-
-    if (!searchResults) return;
-
-    if (!query) {
-      searchResults.textContent = "";
-    } else if (matchingCategories + matchingBusinesses > 0) {
-      searchResults.textContent =
-        "Found " + matchingCategories +
-        " matching service categories and " +
-        matchingBusinesses + " matching business listings.";
-    } else {
-      searchResults.textContent =
-        "No matches found. Try another service or area.";
+    if (firstField) {
+      window.setTimeout(function () {
+        firstField.focus();
+      }, 100);
     }
   }
 
-  if (searchForm && serviceSearch) {
-    searchForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-      performSearch(serviceSearch.value);
-
-      const servicesSection = document.getElementById("services");
-      if (servicesSection) {
-        servicesSection.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      }
-    });
-
-    serviceSearch.addEventListener("input", function () {
-      if (!serviceSearch.value.trim()) performSearch("");
-    });
-  }
-
-  if (serviceGrid) {
-    serviceGrid.addEventListener("click", function (event) {
-      const card = event.target.closest(".service-card");
-      if (!card) return;
-
-      const selectedService =
-        card.dataset.service || card.textContent.trim();
-
-      if (serviceSearch) serviceSearch.value = selectedService;
-      performSearch(selectedService);
-
-      if (searchResults) {
-        searchResults.textContent =
-          "Selected " + selectedService +
-          ". Matching approved listings are shown when available.";
-      }
-
-      const approvedSection =
-        document.getElementById("approved-businesses");
-
-      if (approvedSection) {
-        approvedSection.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      }
-    });
-  }
-
-  // 5. LOCATION ERROR MESSAGES
-  function explainLocationFailure(error) {
-    if (!locationStatus) return;
-
-    if (!navigator.geolocation) {
-      locationStatus.textContent =
-        "Your browser does not support location. Please use a supported browser and enable location access.";
-      return;
-    }
-
-    if (error && error.code === 1) {
-      locationStatus.textContent =
-        "Location permission was denied. Turn on Location in your phone settings, then allow location access for this website and try again.";
-    } else if (error && error.code === 2) {
-      locationStatus.textContent =
-        "Your location could not be detected. Turn on your phone's Location setting, check your connection, and try again.";
-    } else if (error && error.code === 3) {
-      locationStatus.textContent =
-        "Location request timed out. Turn on Location, make sure you have a connection, and try again.";
-    } else {
-      locationStatus.textContent =
-        "Location is required. Turn on Location in your phone settings and allow this website to access it.";
-    }
-  }
-
-  // This checks location permission by requesting the current position.
-  // Coordinates are not included in the registration form or sent to Web3Forms.
-  function requestCurrentLocation() {
-    return new Promise(function (resolve, reject) {
-      if (!window.isSecureContext) {
-        reject({
-          code: 0,
-          message: "A secure HTTPS connection is required for location."
-        });
-        return;
-      }
-
-      if (!navigator.geolocation) {
-        reject({ code: 0 });
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        function (position) {
-          resolve(position);
-        },
-        function (error) {
-          reject(error);
-        },
-        {
-          enableHighAccuracy: false,
-          timeout: 15000,
-          maximumAge: 0
-        }
-      );
-    });
-  }
-
-  // 6. FIND SERVICES NEAR MY LOCATION BUTTON
-  if (locationButton) {
-    locationButton.addEventListener("click", function () {
-      if (locationStatus) {
-        locationStatus.textContent =
-          "Requesting location. Please allow access when your browser asks.";
-      }
-
-      requestCurrentLocation()
-        .then(function () {
-          if (locationStatus) {
-            locationStatus.textContent =
-              "Location access is working. Nearby search is not yet connected to a location-based provider directory.";
-          }
-        })
-        .catch(function (error) {
-          explainLocationFailure(error);
-        });
-    });
-  }
-
-  // 7. REGISTRATION POPUP
-  function showRegistrationModal() {
+  function hideRegistration() {
     if (!registrationModal) return;
 
-    registrationModal.hidden = false;
-    document.body.classList.add("modal-open");
+    registrationModal.classList.remove("is-open");
+    registrationModal.setAttribute("aria-hidden", "true");
 
-    if (registrationMessage) {
-      registrationMessage.textContent = "";
-      registrationMessage.className = "form-message";
-    }
-
-    const businessName = document.getElementById("businessName");
-    if (businessName) businessName.focus();
-  }
-
-  function hideRegistrationModal() {
-    if (!registrationModal) return;
-
-    registrationModal.hidden = true;
-    document.body.classList.remove("modal-open");
-
-    if (openRegistration) openRegistration.focus();
+    document.body.classList.remove("registration-open");
   }
 
   if (openRegistration) {
-    openRegistration.addEventListener("click", showRegistrationModal);
+    openRegistration.addEventListener("click", showRegistration);
+  } else {
+    console.error(
+      "FIND-ME: Cannot find the button with id='openRegistration'."
+    );
   }
 
   if (closeRegistration) {
-    closeRegistration.addEventListener("click", hideRegistrationModal);
+    closeRegistration.addEventListener("click", hideRegistration);
   }
 
   if (registrationModal) {
     registrationModal.addEventListener("click", function (event) {
       if (event.target === registrationModal) {
-        hideRegistrationModal();
+        hideRegistration();
       }
     });
   }
 
   document.addEventListener("keydown", function (event) {
-    if (
-      event.key === "Escape" &&
-      registrationModal &&
-      !registrationModal.hidden
-    ) {
-      hideRegistrationModal();
+    if (event.key === "Escape" && registrationModal) {
+      hideRegistration();
     }
   });
 
-  // 8. WEB3FORMS REGISTRATION
-  // Location must be successfully obtained before the request is sent.
-  // The coordinates themselves are never sent to Web3Forms.
+  // -------------------------------------------------------
+  // 4. REGISTRATION MESSAGE
+  // -------------------------------------------------------
+
+  function showRegistrationMessage(message, success) {
+    if (!registrationMessage) return;
+
+    registrationMessage.textContent = message;
+    registrationMessage.setAttribute(
+      "role",
+      success ? "status" : "alert"
+    );
+
+    registrationMessage.style.color = success ? "#176b32" : "#b42318";
+  }
+
+  // -------------------------------------------------------
+  // 5. CAPTURE THE PHONE'S GPS LOCATION
+  // -------------------------------------------------------
+
+  function clearGPSFields() {
+    if (gpsLatitude) gpsLatitude.value = "";
+    if (gpsLongitude) gpsLongitude.value = "";
+    if (gpsAccuracy) gpsAccuracy.value = "";
+    if (gpsMapLink) gpsMapLink.value = "";
+
+    if (gpsMapPreview) {
+      gpsMapPreview.removeAttribute("href");
+      gpsMapPreview.hidden = true;
+      gpsMapPreview.textContent = "";
+    }
+  }
+
+  function capturePhoneLocation() {
+    if (!navigator.geolocation) {
+      if (locationStatus) {
+        locationStatus.textContent =
+          "GPS is not supported by this browser. Please use a supported browser.";
+      }
+      return;
+    }
+
+    clearGPSFields();
+
+    if (locationStatus) {
+      locationStatus.textContent =
+        "Requesting your phone's location permission...";
+    }
+
+    if (getBusinessLocation) {
+      getBusinessLocation.disabled = true;
+      getBusinessLocation.textContent = "Getting location...";
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const accuracy = position.coords.accuracy;
+
+        const mapURL =
+          "https://www.google.com/maps?q=" +
+          encodeURIComponent(latitude + "," + longitude);
+
+        if (gpsLatitude) {
+          gpsLatitude.value = String(latitude);
+        }
+
+        if (gpsLongitude) {
+          gpsLongitude.value = String(longitude);
+        }
+
+        if (gpsAccuracy) {
+          gpsAccuracy.value = String(Math.round(accuracy));
+        }
+
+        if (gpsMapLink) {
+          gpsMapLink.value = mapURL;
+        }
+
+        if (gpsMapPreview) {
+          gpsMapPreview.href = mapURL;
+          gpsMapPreview.textContent = "View captured location on Google Maps";
+          gpsMapPreview.target = "_blank";
+          gpsMapPreview.rel = "noopener noreferrer";
+          gpsMapPreview.hidden = false;
+        }
+
+        if (locationStatus) {
+          locationStatus.textContent =
+            "Location captured successfully. Accuracy: approximately " +
+            Math.round(accuracy) +
+            " metres.";
+        }
+
+        if (getBusinessLocation) {
+          getBusinessLocation.textContent = "Refresh Phone GPS Location";
+        }
+      },
+
+      function (error) {
+        let message = "Unable to capture your phone's location.";
+
+        if (error.code === 1) {
+          message =
+            "Location permission was denied. Allow location access for this website in your browser settings, then try again.";
+        } else if (error.code === 2) {
+          message =
+            "Your location is unavailable. Turn on Location on your phone and try again.";
+        } else if (error.code === 3) {
+          message =
+            "The location request timed out. Turn on Location and try again.";
+        }
+
+        if (locationStatus) {
+          locationStatus.textContent = message;
+        }
+
+        clearGPSFields();
+      },
+
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 0
+      }
+    );
+
+    // Re-enable the button even if the GPS request fails.
+    // The browser callback may take several seconds.
+    window.setTimeout(function () {
+      if (getBusinessLocation) {
+        getBusinessLocation.disabled = false;
+
+        if (
+          !gpsLatitude ||
+          !gpsLongitude ||
+          !gpsLatitude.value ||
+          !gpsLongitude.value
+        ) {
+          getBusinessLocation.textContent = "Capture Phone GPS Location";
+        }
+      }
+    }, 21000);
+  }
+
+  if (getBusinessLocation) {
+    getBusinessLocation.addEventListener("click", capturePhoneLocation);
+  }
+
+  // -------------------------------------------------------
+  // 6. SUBMIT BUSINESS REGISTRATION TO WEB3FORMS
+  // -------------------------------------------------------
+
   if (providerForm) {
     providerForm.addEventListener("submit", async function (event) {
       event.preventDefault();
 
-      if (!providerForm.reportValidity()) return;
+      showRegistrationMessage("", false);
 
-      const submitButton = providerForm.querySelector(
-        'button[type="submit"]'
-      );
-
-      if (submitButton && submitButton.disabled) return;
-
-      const accessKeyInput = providerForm.querySelector(
-        'input[name="access_key"]'
-      );
-
-      if (
-        !accessKeyInput ||
-        !accessKeyInput.value.trim() ||
-        accessKeyInput.value.includes("YOUR_ACCESS_KEY_HERE")
-      ) {
-        if (registrationMessage) {
-          registrationMessage.textContent =
-            "Registration is not configured. Please contact findme.feedback33@gmail.com.";
-          registrationMessage.className = "form-message error";
-        }
+      if (!providerForm.checkValidity()) {
+        providerForm.reportValidity();
         return;
       }
 
-      const originalButtonText = submitButton
-        ? submitButton.textContent
-        : "";
+      if (!locationConsent || !locationConsent.checked) {
+        showRegistrationMessage(
+          "Please read and accept the location and registration consent before submitting.",
+          false
+        );
 
-      if (submitButton) {
-        submitButton.disabled = true;
-        submitButton.textContent = "Checking location...";
+        if (locationConsent) locationConsent.focus();
+        return;
       }
 
-      if (registrationMessage) {
-        registrationMessage.textContent =
-          "Please allow location access so your registration can continue.";
-        registrationMessage.className = "form-message";
+      if (
+        !gpsLatitude ||
+        !gpsLongitude ||
+        !gpsLatitude.value ||
+        !gpsLongitude.value
+      ) {
+        showRegistrationMessage(
+          "Please capture your phone GPS location before submitting your registration.",
+          false
+        );
+        return;
+      }
+
+      if (
+        !gpsMapLink ||
+        !gpsMapLink.value ||
+        !gpsAccuracy ||
+        !gpsAccuracy.value
+      ) {
+        showRegistrationMessage(
+          "Your GPS information is incomplete. Please capture your location again.",
+          false
+        );
+        return;
+      }
+
+      if (
+        !WEB3FORMS_ACCESS_KEY ||
+        WEB3FORMS_ACCESS_KEY === "YOUR_ACCESS_KEY_HERE"
+      ) {
+        showRegistrationMessage(
+          "Registration email is not configured. Please contact the website administrator.",
+          false
+        );
+        return;
+      }
+
+      const formData = new FormData(providerForm);
+
+      // Ensure the required Web3Forms fields are included.
+      formData.set("access_key", WEB3FORMS_ACCESS_KEY);
+      formData.set("subject", "New FIND-ME Business Registration");
+      formData.set("from_name", "FIND-ME Website");
+      formData.set(
+        "business_name",
+        document.getElementById("businessName")?.value.trim() || ""
+      );
+      formData.set(
+        "business_category",
+        document.getElementById("businessCategory")?.value || ""
+      );
+      formData.set(
+        "business_location",
+        document.getElementById("businessLocation")?.value.trim() || ""
+      );
+      formData.set(
+        "business_address",
+        document.getElementById("businessAddress")?.value.trim() || ""
+      );
+      formData.set(
+        "business_phone",
+        document.getElementById("businessPhone")?.value.trim() || ""
+      );
+      formData.set("phone_gps_latitude", gpsLatitude.value);
+      formData.set("phone_gps_longitude", gpsLongitude.value);
+      formData.set("phone_gps_accuracy_metres", gpsAccuracy.value);
+      formData.set("phone_gps_google_maps_link", gpsMapLink.value);
+      formData.set(
+        "location_consent",
+        "The registrant accepted the location and registration consent."
+      );
+
+      if (submitRegistration) {
+        submitRegistration.disabled = true;
+        submitRegistration.textContent = "Submitting...";
       }
 
       try {
-        // Require successful location access before sending the form.
-        try {
-          await requestCurrentLocation();
-        } catch (locationError) {
-          explainLocationFailure(locationError);
+        const response = await fetch(WEB3FORMS_ENDPOINT, {
+          method: "POST",
+          body: formData
+        });
 
-          if (registrationMessage) {
-            registrationMessage.textContent =
-              "Registration was not sent because location access is required. Turn on Location in your phone settings, allow access for this website, and try again.";
-            registrationMessage.className = "form-message error";
-          }
-
-          return;
-        }
-
-        if (submitButton) {
-          submitButton.textContent = "Sending registration...";
-        }
-
-        if (registrationMessage) {
-          registrationMessage.textContent =
-            "Location confirmed. Sending your registration request...";
-          registrationMessage.className = "form-message";
-        }
-
-        const formData = new FormData(providerForm);
-
-        const response = await fetch(
-          "https://api.web3forms.com/submit",
-          {
-            method: "POST",
-            body: formData
-          }
-        );
-
-        let result;
-
-        try {
-          result = await response.json();
-        } catch {
-          throw new Error("The form service returned an unreadable response.");
-        }
+        const result = await response.json();
 
         if (!response.ok || !result.success) {
           throw new Error(
-            result.message || "The form service rejected the submission."
+            result.message || "The registration service rejected the request."
           );
         }
 
-        if (registrationMessage) {
-          registrationMessage.textContent =
-            "Thank you! Your registration request was sent successfully. FIND-ME will review your details before any public listing is approved.";
-          registrationMessage.className = "form-message success";
-        }
+        showRegistrationMessage(
+          "Registration submitted successfully! FIND-ME has received your details for review. Your business will not appear in public listings until it is approved.",
+          true
+        );
 
         providerForm.reset();
+        clearGPSFields();
 
+        if (locationStatus) {
+          locationStatus.textContent =
+            "Capture your phone GPS location for your next registration.";
+        }
+
+        // Keep the popup open so the confirmation can be read.
       } catch (error) {
         console.error("FIND-ME registration error:", error);
 
-        if (registrationMessage) {
-          registrationMessage.textContent =
-            "Sorry, your request could not be sent. Check your internet connection and try again. If the problem continues, contact findme.feedback33@gmail.com.";
-          registrationMessage.className = "form-message error";
+        showRegistrationMessage(
+          "Registration could not be sent. Check your internet connection and Web3Forms configuration, then try again.",
+          false
+        );
+      } finally {
+        if (submitRegistration) {
+          submitRegistration.disabled = false;
+          submitRegistration.textContent = "Submit Registration";
         }
 
-      } finally {
-        if (submitButton) {
-          submitButton.disabled = false;
-          submitButton.textContent = originalButtonText;
+        if (getBusinessLocation) {
+          getBusinessLocation.disabled = false;
         }
+      }
+    });
+  } else {
+    console.error(
+      "FIND-ME: Cannot find the registration form with id='providerForm'."
+    );
+  }
+
+  // -------------------------------------------------------
+  // 7. APPROVED PUBLIC BUSINESS LISTINGS
+  // -------------------------------------------------------
+  // Only add businesses here after you have approved them
+  // and have permission to publish their contact details.
+  //
+  // Example:
+  // {
+  //   name: "Example Business",
+  //   category: "Plumbers",
+  //   location: "Nairobi",
+  //   address: "Public business address",
+  //   phone: "Business phone number",
+  //   description: "Approved public business listing"
+  // }
+
+  const approvedBusinesses = Array.isArray(
+    window.FIND_ME_APPROVED_BUSINESSES
+  )
+    ? window.FIND_ME_APPROVED_BUSINESSES
+    : [];
+
+  // -------------------------------------------------------
+  // 8. DISPLAY APPROVED BUSINESS CARDS SAFELY
+  // -------------------------------------------------------
+
+  function createBusinessCard(business) {
+    const card = document.createElement("article");
+    card.className = "business-card";
+
+    const heading = document.createElement("h3");
+    heading.textContent = business.name || "Business";
+
+    const category = document.createElement("p");
+    category.textContent = "Service: " + (business.category || "Not specified");
+
+    const location = document.createElement("p");
+    location.textContent = "Area: " + (business.location || "Not specified");
+
+    card.appendChild(heading);
+    card.appendChild(category);
+    card.appendChild(location);
+
+    if (business.description) {
+      const description = document.createElement("p");
+      description.textContent = business.description;
+      card.appendChild(description);
+    }
+
+    if (business.address) {
+      const address = document.createElement("p");
+      address.textContent = "Address: " + business.address;
+      card.appendChild(address);
+    }
+
+    if (business.phone) {
+      const phone = document.createElement("p");
+      phone.textContent = "Phone: " + business.phone;
+      card.appendChild(phone);
+
+      const callLink = document.createElement("a");
+      callLink.textContent = "Call Business";
+      callLink.href = "tel:" + String(business.phone).replace(/[^\d+]/g, "");
+      callLink.className = "business-call-link";
+      card.appendChild(callLink);
+    }
+
+    if (business.mapLink) {
+      try {
+        const parsedURL = new URL(business.mapLink);
+
+        if (
+          parsedURL.protocol === "https:" &&
+          (
+            parsedURL.hostname === "maps.google.com" ||
+            parsedURL.hostname === "www.google.com" ||
+            parsedURL.hostname === "maps.app.goo.gl"
+          )
+        ) {
+          const mapLink = document.createElement("a");
+          mapLink.href = parsedURL.href;
+          mapLink.target = "_blank";
+          mapLink.rel = "noopener noreferrer";
+          mapLink.textContent = "View on Map";
+          card.appendChild(mapLink);
+        }
+      } catch (error) {
+        // Ignore invalid map links.
+      }
+    }
+
+    return card;
+  }
+
+  function renderBusinesses(container, businesses, emptyMessage) {
+    if (!container) return;
+
+    container.replaceChildren();
+
+    if (businesses.length === 0) {
+      const message = document.createElement("p");
+      message.className = "empty-listings-message";
+      message.textContent = emptyMessage;
+      container.appendChild(message);
+      return;
+    }
+
+    businesses.forEach(function (business) {
+      container.appendChild(createBusinessCard(business));
+    });
+  }
+
+  renderBusinesses(
+    approvedBusinessesGrid,
+    approvedBusinesses,
+    "No approved businesses are listed yet. Please check again later."
+  );
+
+  // -------------------------------------------------------
+  // 9. SEARCH APPROVED BUSINESSES
+  // -------------------------------------------------------
+
+  function runSearch(event) {
+    if (event) event.preventDefault();
+
+    if (!searchResults) return;
+
+    const query = searchInput
+      ? searchInput.value.trim().toLowerCase()
+      : "";
+
+    const area = searchLocation
+      ? searchLocation.value.trim().toLowerCase()
+      : "";
+
+    const matches = approvedBusinesses.filter(function (business) {
+      const searchableText = [
+        business.name,
+        business.category,
+        business.location,
+        business.address,
+        business.description
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      const matchesQuery = !query || searchableText.includes(query);
+
+      const businessArea = [
+        business.location,
+        business.address
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      const matchesArea = !area || businessArea.includes(area);
+
+      return matchesQuery && matchesArea;
+    });
+
+    renderBusinesses(
+      searchResults,
+      matches,
+      "No approved businesses match your search yet. Try another service or area."
+    );
+  }
+
+  if (searchForm) {
+    searchForm.addEventListener("submit", runSearch);
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener("input", runSearch);
+  }
+
+  if (searchLocation) {
+    searchLocation.addEventListener("input", runSearch);
+  }
+
+  // -------------------------------------------------------
+  // 10. SERVICE CATEGORY BUTTONS
+  // -------------------------------------------------------
+
+  if (serviceGrid) {
+    serviceGrid.addEventListener("click", function (event) {
+      const categoryButton = event.target.closest("[data-category]");
+
+      if (!categoryButton || !serviceGrid.contains(categoryButton)) {
+        return;
+      }
+
+      const category = categoryButton.getAttribute("data-category");
+
+      if (searchInput) {
+        searchInput.value = category;
+      }
+
+      runSearch();
+
+      if (searchResults) {
+        searchResults.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
       }
     });
   }
 
-  console.info(
-    "FIND-ME loaded successfully. Approved public listings:",
-    approvedBusinesses.length
-  );
+  console.log("FIND-ME script loaded successfully.");
 });
