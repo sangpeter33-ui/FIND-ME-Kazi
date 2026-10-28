@@ -5,228 +5,321 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f58220">
-  <meta name="description" content="FIND-ME helps you find local services and register your business.">
-  <title>FIND-ME | Local Services Directory</title>
+  <meta name="description" content="FIND-ME helps you find local service providers and register your business.">
+  <title>FIND-ME | Find Local Services</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<header class="site-header">
-  <a href="./" class="brand" aria-label="FIND-ME Home">
-    <span class="brand-logo">F</span>
-    <span>
-      <strong>FIND-ME</strong>
-      <small>Your local services directory</small>
-    </span>
-  </a>
-  <p>Find services. Connect locally.</p>
-</header>
+  <!-- HEADER -->
+  <header class="site-header">
+    <a class="brand" href="./">
+      <span class="brand-logo">F</span>
+      <span class="brand-text">
+        <strong>FIND-ME</strong>
+        <small>Your local services directory</small>
+      </span>
+    </a>
+    <p class="header-message">Find services. Connect locally.</p>
+  </header>
 
-<main>
-  <section class="hero">
-    <span class="eyebrow">YOUR COMMUNITY, CONNECTED</span>
-    <h1>Find the service you need.</h1>
-    <p>Discover local service providers and connect with businesses in your area.</p>
-  </section>
+  <main>
 
-  <section class="panel" id="searchSection">
-    <h2>Search for Services</h2>
+    <!-- INTRODUCTION -->
+    <section class="hero">
+      <span class="eyebrow">YOUR COMMUNITY, CONNECTED</span>
+      <h1>Find the service you need.</h1>
+      <p>Discover local service providers and connect with businesses in your area.</p>
+    </section>
 
-    <form id="searchForm">
-      <label for="searchInput">Service or business name</label>
-      <input
-        type="search"
-        id="searchInput"
-        placeholder="e.g. plumber, taxi, tutor"
-        autocomplete="off"
-      >
+    <!-- SEARCH -->
+    <section class="panel" id="searchSection">
+      <h2>Search for Services</h2>
 
-      <label for="searchLocation">Town or area (optional)</label>
-      <input
-        type="text"
-        id="searchLocation"
-        placeholder="e.g. Nairobi, Nakuru"
-        autocomplete="address-level2"
-      >
+      <form id="searchForm">
+        <label for="searchInput">Service or business name</label>
+        <input
+          type="search"
+          id="searchInput"
+          placeholder="e.g. plumber, taxi, tutor"
+          autocomplete="off"
+        >
 
-      <button type="submit" class="button button-orange">
-        Search Services
-      </button>
-    </form>
+        <label for="searchLocation">Town or area (optional)</label>
+        <input
+          type="text"
+          id="searchLocation"
+          placeholder="e.g. Nairobi, Nakuru"
+          autocomplete="address-level2"
+        >
 
-    <div id="searchResults" aria-live="polite"></div>
-  </section>
-
-  <section class="panel">
-    <h2>Browse Service Categories</h2>
-    <p class="muted">Choose a category to search for.</p>
-
-    <div id="serviceGrid" class="service-grid">
-      <button type="button" class="service-card" data-category="Plumbers">🔧<span>Plumbers</span></button>
-      <button type="button" class="service-card" data-category="Electricians">⚡<span>Electricians</span></button>
-      <button type="button" class="service-card" data-category="Appliance Repair">🛠️<span>Appliance Repair</span></button>
-      <button type="button" class="service-card" data-category="Cleaning Services">🧹<span>Cleaning Services</span></button>
-      <button type="button" class="service-card" data-category="Phone Repair">📱<span>Phone Repair</span></button>
-      <button type="button" class="service-card" data-category="Bodaboda">🏍️<span>Bodaboda</span></button>
-      <button type="button" class="service-card" data-category="Taxi Services">🚕<span>Taxi Services</span></button>
-      <button type="button" class="service-card" data-category="Welders">🔩<span>Welders</span></button>
-      <button type="button" class="service-card" data-category="Mama Fua">👕<span>Mama Fua</span></button>
-      <button type="button" class="service-card" data-category="Tutors">📚<span>Tutors</span></button>
-      <button type="button" class="service-card" data-category="Delivery Services">📦<span>Delivery Services</span></button>
-      <button type="button" class="service-card" data-category="Mechanics">🚗<span>Mechanics</span></button>
-      <button type="button" class="service-card" data-category="Hospitals">🏥<span>Hospitals</span></button>
-      <button type="button" class="service-card" data-category="Restaurants">🍽️<span>Restaurants</span></button>
-      <button type="button" class="service-card" data-category="Shops">🛍️<span>Shops</span></button>
-    </div>
-  </section>
-
-  <section class="panel" id="approvedBusinessesSection">
-    <h2>Available Service Providers</h2>
-    <p class="muted">Browse the business listings available on FIND-ME.</p>
-    <div id="approvedBusinessesGrid"></div>
-  </section>
-
-  <!-- THE ONLY REGISTRATION BAR -->
-  <section class="registration-bar">
-    <div>
-      <h2>Ready to join FIND-ME?</h2>
-      <p>Register your business for review.</p>
-    </div>
-    <button type="button" id="openRegistration" class="button button-yellow">
-      Tap to Register Here →
-    </button>
-  </section>
-</main>
-
-<!-- ONE REGISTRATION POP-UP -->
-<div id="registrationModal" class="modal-overlay" aria-hidden="true">
-  <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="registrationTitle">
-    <button type="button" id="closeRegistration" class="close-button" aria-label="Close registration">&times;</button>
-
-    <h2 id="registrationTitle">Register Your Business</h2>
-    <p class="muted">Enter your business details accurately.</p>
-
-    <form id="providerForm">
-      <!-- Keep your existing Web3Forms access key here. -->
-      <input type="hidden" name="access_key" value="c03d37ca-27dc-4a67-b56d-107f5eb94232">
-      <input type="hidden" name="subject" value="New FIND-ME Business Registration">
-      <input type="hidden" name="from_name" value="FIND-ME Website">
-      <input type="checkbox" name="botcheck" class="botcheck" tabindex="-1" autocomplete="off">
-
-      <label for="businessName">Business name *</label>
-      <input type="text" id="businessName" name="Business Name" maxlength="100" required>
-
-      <label for="businessCategory">Service category *</label>
-      <select id="businessCategory" name="Business Category" required>
-        <option value="">Choose a category</option>
-        <option>Plumbers</option>
-        <option>Electricians</option>
-        <option>Appliance Repair</option>
-        <option>Cleaning Services</option>
-        <option>Phone Repair</option>
-        <option>Bodaboda</option>
-        <option>Taxi Services</option>
-        <option>Welders</option>
-        <option>Mama Fua</option>
-        <option>Tutors</option>
-        <option>Delivery Services</option>
-        <option>Mechanics</option>
-        <option>Hospitals</option>
-        <option>Restaurants</option>
-        <option>Shops</option>
-        <option>Other</option>
-      </select>
-
-      <label for="businessLocation">Town or area *</label>
-      <input type="text" id="businessLocation" name="Town or Area" maxlength="120" placeholder="e.g. Nairobi, Embakasi" required>
-
-      <!-- Actual business address, separate from phone GPS -->
-      <label for="businessAddress">Actual business address *</label>
-      <textarea
-        id="businessAddress"
-        name="Actual Business Address"
-        rows="3"
-        maxlength="250"
-        placeholder="Estate, street, building or nearby landmark"
-        required
-      ></textarea>
-
-      <label for="businessPhone">Business phone number *</label>
-      <input
-        type="tel"
-        id="businessPhone"
-        name="Business Phone"
-        inputmode="tel"
-        maxlength="25"
-        placeholder="Enter business contact number"
-        required
-      >
-
-      <!-- GPS values are populated by script.js -->
-      <input type="hidden" id="phoneGPSLatitude" name="Phone GPS Latitude">
-      <input type="hidden" id="phoneGPSLongitude" name="Phone GPS Longitude">
-      <input type="hidden" id="phoneGPSAccuracy" name="Phone GPS Accuracy (metres)">
-      <input type="hidden" id="phoneGPSMapLink" name="Phone GPS Google Maps Link">
-
-      <div class="gps-panel">
-        <h3>📍 Confirm your phone location</h3>
-        <p>
-          Allow location access so FIND-ME can include your phone's
-          GPS coordinates and a Google Maps link in the registration
-          notification. Your phone location may differ from your business address.
-        </p>
-
-        <button type="button" id="getBusinessLocation" class="button button-gps">
-          Capture My GPS Location
+        <button type="submit" class="button button-orange full-width">
+          Search Services
         </button>
+      </form>
 
-        <p id="locationStatus" class="location-status" role="status" aria-live="polite">
-          GPS location has not been captured.
-        </p>
+      <div id="searchResults" aria-live="polite"></div>
+    </section>
 
-        <a id="gpsMapPreview" class="map-link" href="#" target="_blank" rel="noopener" hidden>
-          View captured location on Google Maps
-        </a>
+    <!-- CATEGORIES -->
+    <section class="panel">
+      <h2>Browse Service Categories</h2>
+      <p class="muted">Select a category to search.</p>
+
+      <div id="serviceGrid" class="service-grid">
+        <button type="button" class="service-card" data-category="Plumbers">🔧<span>Plumbers</span></button>
+        <button type="button" class="service-card" data-category="Electricians">⚡<span>Electricians</span></button>
+        <button type="button" class="service-card" data-category="Appliance Repair">🛠️<span>Appliance Repair</span></button>
+        <button type="button" class="service-card" data-category="Cleaning Services">🧹<span>Cleaning Services</span></button>
+        <button type="button" class="service-card" data-category="Phone Repair">📱<span>Phone Repair</span></button>
+        <button type="button" class="service-card" data-category="Bodaboda">🏍️<span>Bodaboda</span></button>
+        <button type="button" class="service-card" data-category="Taxi Services">🚕<span>Taxi Services</span></button>
+        <button type="button" class="service-card" data-category="Welders">🔩<span>Welders</span></button>
+        <button type="button" class="service-card" data-category="Mama Fua">👕<span>Mama Fua</span></button>
+        <button type="button" class="service-card" data-category="Tutors">📚<span>Tutors</span></button>
+        <button type="button" class="service-card" data-category="Delivery Services">📦<span>Delivery Services</span></button>
+        <button type="button" class="service-card" data-category="Mechanics">🚗<span>Mechanics</span></button>
+        <button type="button" class="service-card" data-category="Hospitals">🏥<span>Hospitals</span></button>
+        <button type="button" class="service-card" data-category="Restaurants">🍽️<span>Restaurants</span></button>
+        <button type="button" class="service-card" data-category="Shops">🛍️<span>Shops</span></button>
+      </div>
+    </section>
+
+    <!-- APPROVED PUBLIC LISTINGS -->
+    <section class="panel" id="approvedBusinessesSection">
+      <h2>Available Service Providers</h2>
+      <p class="muted">Explore available business listings.</p>
+      <div id="approvedBusinessesGrid">
+        <p class="empty-message">Business listings will appear here.</p>
+      </div>
+    </section>
+
+    <!-- ONE REGISTRATION BAR ONLY -->
+    <section class="registration-bar">
+      <div>
+        <h2>Ready to join FIND-ME?</h2>
+        <p>Register your business for review.</p>
       </div>
 
-      <label class="consent-row" for="locationConsent">
+      <button
+        type="button"
+        id="openRegistration"
+        class="button button-yellow"
+      >
+        Tap to Register Here →
+      </button>
+    </section>
+
+  </main>
+
+  <!-- ONE REGISTRATION POP-UP -->
+  <div
+    id="registrationModal"
+    class="modal-overlay"
+    aria-hidden="true"
+  >
+    <section
+      class="modal-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="registrationTitle"
+    >
+
+      <button
+        type="button"
+        id="closeRegistration"
+        class="close-button"
+        aria-label="Close registration"
+      >&times;</button>
+
+      <h2 id="registrationTitle">Register Your Business</h2>
+      <p class="muted">Complete the details below for registration review.</p>
+
+      <form id="providerForm">
+
+        <!-- Web3Forms notification settings -->
+        <input
+          type="hidden"
+          name="access_key"
+          value="c03d37ca-27dc-4a67-b56d-107f5eb94232"
+        >
+        <input
+          type="hidden"
+          name="subject"
+          value="New FIND-ME Business Registration"
+        >
+        <input
+          type="hidden"
+          name="from_name"
+          value="FIND-ME Website"
+        >
+
         <input
           type="checkbox"
-          id="locationConsent"
-          name="Location Consent"
-          value="Yes"
+          name="botcheck"
+          class="botcheck"
+          tabindex="-1"
+          autocomplete="off"
+        >
+
+        <label for="businessName">Business name *</label>
+        <input
+          type="text"
+          id="businessName"
+          name="Business Name"
+          maxlength="100"
           required
         >
-        <span>
-          I agree that FIND-ME may collect my current phone GPS coordinates
-          and the business address I provide for registration review.
-          These details will be included in the registration notification email.
-        </span>
-      </label>
 
-      <button type="submit" id="submitRegistration" class="button button-orange full-width">
-        Submit Business Registration
-      </button>
+        <label for="businessCategory">Service category *</label>
+        <select id="businessCategory" name="Business Category" required>
+          <option value="">Choose a category</option>
+          <option>Plumbers</option>
+          <option>Electricians</option>
+          <option>Appliance Repair</option>
+          <option>Cleaning Services</option>
+          <option>Phone Repair</option>
+          <option>Bodaboda</option>
+          <option>Taxi Services</option>
+          <option>Welders</option>
+          <option>Mama Fua</option>
+          <option>Tutors</option>
+          <option>Delivery Services</option>
+          <option>Mechanics</option>
+          <option>Hospitals</option>
+          <option>Restaurants</option>
+          <option>Shops</option>
+          <option>Other</option>
+        </select>
 
-      <div id="registrationMessage" role="status" aria-live="polite"></div>
+        <label for="businessLocation">Town or area *</label>
+        <input
+          type="text"
+          id="businessLocation"
+          name="Town or Area"
+          maxlength="120"
+          placeholder="e.g. Nairobi, Embakasi"
+          required
+        >
 
-      <p class="privacy-note">
-        Your details are submitted for review. Registration does not guarantee publication.
-      </p>
-    </form>
-  </section>
-</div>
+        <label for="businessAddress">Actual business address *</label>
+        <textarea
+          id="businessAddress"
+          name="Actual Business Address"
+          rows="3"
+          maxlength="250"
+          placeholder="Estate, street, building or nearby landmark"
+          required
+        ></textarea>
 
-<footer class="site-footer">
-  <strong>FIND-ME</strong>
-  <p>Connecting people with local services.</p>
-  <p>
-    Feedback:
-    <a href="mailto:findme.feedback33@gmail.com">findme.feedback33@gmail.com</a>
-  </p>
-  <p class="copyright">© 2026 FIND-ME. All rights reserved.</p>
-</footer>
+        <label for="businessPhone">Business phone number *</label>
+        <input
+          type="tel"
+          id="businessPhone"
+          name="Business Phone"
+          inputmode="tel"
+          maxlength="25"
+          placeholder="Enter business contact number"
+          required
+        >
 
-<script src="script.js"></script>
+        <!-- Hidden GPS fields populated by script.js -->
+        <input type="hidden" id="phoneGPSLatitude" name="Phone GPS Latitude">
+        <input type="hidden" id="phoneGPSLongitude" name="Phone GPS Longitude">
+        <input type="hidden" id="phoneGPSAccuracy" name="Phone GPS Accuracy (metres)">
+        <input type="hidden" id="phoneGPSMapLink" name="Phone GPS Google Maps Link">
+
+        <!-- GPS CAPTURE -->
+        <div class="gps-panel">
+          <h3>📍 Confirm Your Phone Location</h3>
+
+          <p>
+            Tap the button to request access to your phone's current GPS
+            location. This may be different from your actual business address.
+          </p>
+
+          <button
+            type="button"
+            id="getBusinessLocation"
+            class="button button-gps full-width"
+          >
+            Capture My GPS Location
+          </button>
+
+          <p
+            id="locationStatus"
+            class="location-status"
+            role="status"
+            aria-live="polite"
+          >
+            GPS location has not been captured.
+          </p>
+
+          <a
+            id="gpsMapPreview"
+            class="map-link"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            hidden
+          >
+            View Captured Location on Google Maps
+          </a>
+        </div>
+
+        <!-- CONSENT -->
+        <label class="consent-row" for="locationConsent">
+          <input
+            type="checkbox"
+            id="locationConsent"
+            name="Location Consent"
+            value="Yes"
+            required
+          >
+          <span>
+            I agree that FIND-ME may collect my current phone GPS coordinates
+            and the business address I provide for registration review.
+            These details will be included in the registration notification email.
+          </span>
+        </label>
+
+        <button
+          type="submit"
+          id="submitRegistration"
+          class="button button-orange full-width"
+        >
+          Submit Business Registration
+        </button>
+
+        <div
+          id="registrationMessage"
+          role="status"
+          aria-live="polite"
+        ></div>
+
+        <p class="privacy-note">
+          Your registration is submitted for review. Submission does not
+          guarantee publication in the public directory.
+        </p>
+
+      </form>
+    </section>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <strong>FIND-ME</strong>
+    <p>Connecting people with local services.</p>
+    <p>
+      Feedback:
+      <a href="mailto:findme.feedback33@gmail.com">
+        findme.feedback33@gmail.com
+      </a>
+    </p>
+    <p class="copyright">© 2026 FIND-ME. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
