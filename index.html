@@ -17,6 +17,7 @@
 
   <!-- HEADER -->
   <header class="site-header">
+
     <a href="#home" class="logo">FIND-ME <span>KAZI</span></a>
 
     <button type="button" id="menuToggle" class="menu-toggle" aria-label="Open navigation">
@@ -35,6 +36,7 @@
       <button type="button" id="openRegisterBtn" class="btn btn-primary">Register</button>
       <button type="button" id="logoutBtn" class="btn btn-outline" hidden>Logout</button>
     </div>
+
   </header>
 
 
@@ -53,17 +55,11 @@
           and discover services around Kenya.
         </p>
 
-        <button
-          type="button"
-          class="btn btn-primary"
-          data-popup="servicesPopup">
+        <button type="button" class="btn btn-primary" data-popup="servicesPopup">
           Explore Services
         </button>
 
-        <button
-          type="button"
-          class="btn btn-outline"
-          data-popup="registerPopup">
+        <button type="button" class="btn btn-outline" data-popup="registerPopup">
           List Your Business
         </button>
 
@@ -111,6 +107,7 @@
 
   <!-- HOME POPUP -->
   <div class="popup-overlay" id="homePopup" hidden>
+
     <section class="popup-content">
 
       <button type="button" class="popup-close" aria-label="Close">&times;</button>
@@ -131,16 +128,19 @@
       </button>
 
     </section>
+
   </div>
 
 
   <!-- SERVICES POPUP -->
   <div class="popup-overlay" id="servicesPopup" hidden>
+
     <section class="popup-content popup-large">
 
       <button type="button" class="popup-close" aria-label="Close">&times;</button>
 
       <p class="section-label">DISCOVER LOCAL BUSINESSES</p>
+
       <h2>Find Services</h2>
 
       <div class="search-box">
@@ -163,30 +163,58 @@
 
       </div>
 
+
+      <!-- SERVICE CATEGORIES -->
       <h3>Browse Categories</h3>
 
       <div class="category-list" id="categoryFilters">
 
         <button type="button" class="category-btn active" data-category="all">All Services</button>
+
         <button type="button" class="category-btn" data-category="Plumbing">Plumbers</button>
+
         <button type="button" class="category-btn" data-category="Electricians">Electricians</button>
+
         <button type="button" class="category-btn" data-category="Mechanics">Mechanics</button>
+
         <button type="button" class="category-btn" data-category="Cleaning Services">Cleaning</button>
+
         <button type="button" class="category-btn" data-category="Phone Repair">Phone Repair</button>
+
         <button type="button" class="category-btn" data-category="Bodaboda">Bodaboda</button>
+
         <button type="button" class="category-btn" data-category="Taxi Services">Taxi Services</button>
+
         <button type="button" class="category-btn" data-category="Welders">Welders</button>
+
         <button type="button" class="category-btn" data-category="Mama Fua">Mama Fua</button>
+
         <button type="button" class="category-btn" data-category="Tutors">Tutors</button>
+
         <button type="button" class="category-btn" data-category="Delivery Service">Delivery</button>
+
         <button type="button" class="category-btn" data-category="Appliance Repair">Appliance Repair</button>
+
+        <button type="button" class="category-btn" data-category="Nail Technicians">Nail Technicians</button>
+
+        <button type="button" class="category-btn" data-category="Barbers & Hairdressers">Barbers & Hairdressers</button>
+
+        <button type="button" class="category-btn" data-category="Carpenters">Carpenters</button>
+
+        <button type="button" class="category-btn" data-category="Painters & Decorators">Painters & Decorators</button>
+
+        <button type="button" class="category-btn" data-category="Pest Control & Fumigation">Pest Control & Fumigation</button>
 
       </div>
 
+
+      <!-- APPROVED BUSINESS LISTINGS -->
       <h3>Available Service Providers</h3>
 
       <div id="approvedBusinessesGrid" class="services-grid">
+
         <p id="businessLoadingMessage">Loading available businesses...</p>
+
       </div>
 
       <p id="noBusinessesMessage" hidden>
@@ -194,23 +222,29 @@
       </p>
 
     </section>
+
   </div>
 
 
   <!-- PRICING POPUP -->
   <div class="popup-overlay" id="pricingPopup" hidden>
+
     <section class="popup-content popup-large">
 
       <button type="button" class="popup-close" aria-label="Close">&times;</button>
 
       <p class="section-label">GROW YOUR BUSINESS</p>
+
       <h2>Choose Your Listing Plan</h2>
 
       <div class="pricing-grid">
 
         <article class="pricing-card">
+
           <h3>Free Trial</h3>
+
           <p class="plan-price">FREE</p>
+
           <p>30 days</p>
 
           <ul>
@@ -223,11 +257,16 @@
           <button type="button" class="btn btn-outline choose-plan-btn" data-plan="Free Trial">
             Start Free Trial
           </button>
+
         </article>
 
+
         <article class="pricing-card">
+
           <h3>Growth</h3>
+
           <p class="plan-price">KSh 500</p>
+
           <p>6 months</p>
 
           <ul>
@@ -240,12 +279,18 @@
           <button type="button" class="btn btn-primary choose-plan-btn" data-plan="Growth">
             Choose Growth
           </button>
+
         </article>
 
+
         <article class="pricing-card featured-plan">
+
           <p class="plan-label">PREMIUM PLAN</p>
+
           <h3>Verified Pro</h3>
+
           <p class="plan-price">KSh 1,000</p>
+
           <p>1 year</p>
 
           <ul>
@@ -258,6 +303,7 @@
           <button type="button" class="btn btn-primary choose-plan-btn" data-plan="Verified Pro">
             Choose Verified Pro
           </button>
+
         </article>
 
       </div>
@@ -270,16 +316,19 @@
       <p id="selectedPlanMessage" role="status"></p>
 
     </section>
+
   </div>
 
 
   <!-- CONTACT POPUP -->
   <div class="popup-overlay" id="contactPopup" hidden>
+
     <section class="popup-content">
 
       <button type="button" class="popup-close" aria-label="Close">&times;</button>
 
       <p class="section-label">WE ARE HERE TO HELP</p>
+
       <h2>Contact FIND-ME KAZI</h2>
 
       <p>Have a question about your account, listing or business plan?</p>
@@ -296,11 +345,13 @@
       </a>
 
     </section>
+
   </div>
 
 
   <!-- ACCOUNT POPUP -->
   <div class="popup-overlay" id="accountPopup" hidden>
+
     <section class="popup-content">
 
       <button type="button" class="popup-close" aria-label="Close">&times;</button>
@@ -311,28 +362,63 @@
         Register to manage your business profile.
       </p>
 
+
       <!-- REGISTER FORM -->
       <form id="registerForm">
 
         <label for="registerName">Full name</label>
-        <input type="text" id="registerName" autocomplete="name" placeholder="Your full name" required>
+
+        <input
+          type="text"
+          id="registerName"
+          autocomplete="name"
+          placeholder="Your full name"
+          required>
+
 
         <label for="registerEmail">Email address</label>
-        <input type="email" id="registerEmail" autocomplete="email" placeholder="Your email address" required>
+
+        <input
+          type="email"
+          id="registerEmail"
+          autocomplete="email"
+          placeholder="Your email address"
+          required>
+
 
         <label for="registerPassword">Password</label>
-        <input type="password" id="registerPassword" autocomplete="new-password" minlength="6" placeholder="Create password" required>
+
+        <input
+          type="password"
+          id="registerPassword"
+          autocomplete="new-password"
+          minlength="6"
+          placeholder="Create password"
+          required>
+
 
         <label for="confirmPassword">Confirm password</label>
-        <input type="password" id="confirmPassword" autocomplete="new-password" minlength="6" placeholder="Confirm password" required>
 
-        <button type="submit" class="btn btn-primary">Create Account</button>
+        <input
+          type="password"
+          id="confirmPassword"
+          autocomplete="new-password"
+          minlength="6"
+          placeholder="Confirm password"
+          required>
+
+
+        <button type="submit" class="btn btn-primary">
+          Create Account
+        </button>
 
         <p id="registerMessage" role="status"></p>
 
         <p>
           Already registered?
-          <button type="button" id="showLoginBtn" class="text-button">Login here</button>
+          <button type="button" id="showLoginBtn" class="text-button">
+            Login here
+          </button>
         </p>
 
       </form>
@@ -342,42 +428,79 @@
       <form id="loginForm" hidden>
 
         <label for="loginEmail">Email address</label>
-        <input type="email" id="loginEmail" autocomplete="email" placeholder="Your email address" required>
+
+        <input
+          type="email"
+          id="loginEmail"
+          autocomplete="email"
+          placeholder="Your email address"
+          required>
+
 
         <label for="loginPassword">Password</label>
-        <input type="password" id="loginPassword" autocomplete="current-password" placeholder="Your password" required>
 
-        <button type="submit" class="btn btn-primary">Login</button>
+        <input
+          type="password"
+          id="loginPassword"
+          autocomplete="current-password"
+          placeholder="Your password"
+          required>
+
+
+        <button type="submit" class="btn btn-primary">
+          Login
+        </button>
+
+
+        <!-- FORGOT PASSWORD -->
+        <p class="forgot-password">
+          <a href="#" id="forgotPasswordLink">
+            Forgot Password?
+          </a>
+        </p>
+
+        <p id="resetMessage" role="status"></p>
 
         <p id="loginMessage" role="status"></p>
 
         <p>
           Don't have an account?
-          <button type="button" id="showRegisterBtn" class="text-button">Register here</button>
+          <button type="button" id="showRegisterBtn" class="text-button">
+            Register here
+          </button>
         </p>
 
       </form>
 
+
+      <!-- GOOGLE SIGN IN -->
       <div class="google-signin-section">
+
         <p>Or continue with</p>
+
         <button type="button" id="googleSignInBtn" class="btn btn-outline">
           Continue with Google
         </button>
+
       </div>
 
     </section>
+
   </div>
 
 
-  <!-- REGISTER POPUP -->
+  <!-- REGISTER BUSINESS POPUP -->
   <div class="popup-overlay" id="registerPopup" hidden>
+
     <section class="popup-content">
 
       <button type="button" class="popup-close" aria-label="Close">&times;</button>
 
       <h2>List Your Business</h2>
 
-      <p>Create an account to register your business and manage your listing.</p>
+      <p>
+        Create an account to register your business and manage your listing.
+      </p>
 
       <button type="button" class="btn btn-primary" id="registerFromBusinessBtn">
         Create Business Account
@@ -390,28 +513,36 @@
       </button>
 
     </section>
+
   </div>
 
 
   <!-- BUSINESS DASHBOARD POPUP -->
   <div class="popup-overlay" id="dashboardPopup" hidden>
+
     <section class="popup-content popup-large">
 
       <button type="button" class="popup-close" aria-label="Close">&times;</button>
 
       <p class="section-label">BUSINESS OWNER AREA</p>
+
       <h2>My Business Dashboard</h2>
 
+
       <div class="account-summary">
+
         <p>Signed in as:</p>
+
         <strong id="signedInEmail">Not signed in</strong>
 
         <p>Current plan: <strong id="currentPlan">Free Trial</strong></p>
 
         <p>Profile status: <strong id="profileStatus">Not submitted</strong></p>
+
       </div>
 
 
+      <!-- BUSINESS PROFILE -->
       <div class="profile-card">
 
         <h3>Create or Update Your Business Profile</h3>
@@ -419,84 +550,184 @@
         <form id="businessProfileForm">
 
           <label for="businessName">Business name</label>
-          <input type="text" id="businessName" placeholder="Business name" required>
 
+          <input
+            type="text"
+            id="businessName"
+            placeholder="Business name"
+            required>
+
+
+          <!-- BUSINESS CATEGORIES -->
           <label for="businessCategory">Business category</label>
+
           <select id="businessCategory" required>
+
             <option value="">Select category</option>
+
             <option>Plumbing</option>
+
             <option>Electricians</option>
+
             <option>Mechanics</option>
+
             <option>Cleaning Services</option>
+
             <option>Phone Repair</option>
+
             <option>Bodaboda</option>
+
             <option>Taxi Services</option>
+
             <option>Welders</option>
+
             <option>Mama Fua</option>
+
             <option>Tutors</option>
+
             <option>Delivery Service</option>
+
             <option>Appliance Repair</option>
+
+            <option>Nail Technicians</option>
+
+            <option>Barbers & Hairdressers</option>
+
+            <option>Carpenters</option>
+
+            <option>Painters & Decorators</option>
+
+            <option>Pest Control & Fumigation</option>
+
             <option>Other</option>
+
           </select>
 
+
           <label for="businessOwnerName">Owner's name</label>
-          <input type="text" id="businessOwnerName" placeholder="Owner's name" required>
+
+          <input
+            type="text"
+            id="businessOwnerName"
+            placeholder="Owner's name"
+            required>
+
 
           <label for="businessPhone">Business phone</label>
-          <input type="tel" id="businessPhone" placeholder="07XXXXXXXX" required>
+
+          <input
+            type="tel"
+            id="businessPhone"
+            placeholder="07XXXXXXXX"
+            required>
+
 
           <label for="businessWhatsApp">WhatsApp number</label>
-          <input type="tel" id="businessWhatsApp" placeholder="WhatsApp number">
+
+          <input
+            type="tel"
+            id="businessWhatsApp"
+            placeholder="WhatsApp number">
+
 
           <label for="businessLocation">Town or area</label>
-          <input type="text" id="businessLocation" placeholder="e.g. Nairobi" required>
+
+          <input
+            type="text"
+            id="businessLocation"
+            placeholder="e.g. Nairobi"
+            required>
+
 
           <label for="businessAddress">Physical address</label>
-          <input type="text" id="businessAddress" placeholder="Business address">
+
+          <input
+            type="text"
+            id="businessAddress"
+            placeholder="Business address">
+
 
           <label for="businessDescription">Business description</label>
-          <textarea id="businessDescription" rows="4" placeholder="Describe your services" required></textarea>
+
+          <textarea
+            id="businessDescription"
+            rows="4"
+            placeholder="Describe your services"
+            required></textarea>
 
 
+          <!-- BUSINESS LOGO -->
           <div class="upload-section">
+
             <h3>Business Logo</h3>
+
             <input type="file" id="businessLogo" accept="image/*">
+
             <div id="logoPreview" class="image-preview"></div>
+
           </div>
 
 
+          <!-- SERVICE PHOTOS -->
           <div class="upload-section">
-            <h3>Service Photos</h3>
-            <p id="photoLimitMessage">Free Trial: Up to 3 service photos.</p>
 
-            <input type="file" id="businessPhotos" accept="image/*" multiple>
+            <h3>Service Photos</h3>
+
+            <p id="photoLimitMessage">
+              Free Trial: Up to 3 service photos.
+            </p>
+
+            <input
+              type="file"
+              id="businessPhotos"
+              accept="image/*"
+              multiple>
 
             <div id="businessPhotoPreview" class="image-preview"></div>
+
           </div>
 
 
+          <!-- BUSINESS LOCATION -->
           <div class="location-section">
+
             <h3>Business Location</h3>
 
-            <button type="button" id="getBusinessLocation" class="btn btn-outline">
+            <button
+              type="button"
+              id="getBusinessLocation"
+              class="btn btn-outline">
               Use My Current Location
             </button>
 
-            <p id="locationStatus">Location has not been captured.</p>
+            <p id="locationStatus">
+              Location has not been captured.
+            </p>
 
             <input type="hidden" id="businessLatitude">
+
             <input type="hidden" id="businessLongitude">
+
             <input type="hidden" id="businessAccuracy">
+
           </div>
 
 
+          <!-- CONSENT -->
           <label class="consent-label">
+
             <input type="checkbox" id="businessConsent" required>
+
             I confirm that the business information and photos are accurate
             and that I have permission to share them.
+
           </label>
 
-          <button type="submit" id="saveBusinessProfileBtn" class="btn btn-primary">
+
+          <button
+            type="submit"
+            id="saveBusinessProfileBtn"
+            class="btn btn-primary">
             Save Business Profile
           </button>
 
@@ -507,15 +738,19 @@
       </div>
 
 
+      <!-- MY BUSINESS LISTING -->
       <div class="profile-card">
+
         <h3>My Business Listing</h3>
 
         <div id="myBusinessListing">
           No business profile submitted yet.
         </div>
+
       </div>
 
     </section>
+
   </div>
 
 
@@ -536,33 +771,45 @@
   </footer>
 
 
-  <!-- POPUP NAVIGATION AND BASIC INTERACTIONS -->
+  <!-- POPUP NAVIGATION -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
 
       const popups = document.querySelectorAll(".popup-overlay");
 
       function closeAllPopups() {
+
         popups.forEach(function (popup) {
           popup.hidden = true;
         });
 
         document.body.classList.remove("popup-open");
+
       }
 
+
       function openPopup(id) {
+
         const popup = document.getElementById(id);
 
         if (!popup) return;
 
         closeAllPopups();
+
         popup.hidden = false;
+
         document.body.classList.add("popup-open");
 
         const menu = document.getElementById("mainNavigation");
-        if (menu) menu.classList.remove("active");
+
+        if (menu) {
+          menu.classList.remove("active");
+        }
+
       }
 
+
+      // OPEN AND CLOSE POPUPS
       document.addEventListener("click", function (event) {
 
         const trigger = event.target.closest("[data-popup]");
@@ -584,89 +831,122 @@
       });
 
 
+      // ESCAPE KEY
       document.addEventListener("keydown", function (event) {
+
         if (event.key === "Escape") {
           closeAllPopups();
         }
+
       });
 
 
+      // MOBILE NAVIGATION
       const menuToggle = document.getElementById("menuToggle");
+
       const navigation = document.getElementById("mainNavigation");
 
       if (menuToggle && navigation) {
+
         menuToggle.addEventListener("click", function () {
           navigation.classList.toggle("active");
         });
+
       }
 
 
+      // LOGIN BUTTON
       document.getElementById("openLoginBtn").addEventListener("click", function () {
+
         openPopup("accountPopup");
+
         document.getElementById("loginForm").hidden = false;
+
         document.getElementById("registerForm").hidden = true;
+
       });
 
 
+      // REGISTER BUTTON
       document.getElementById("openRegisterBtn").addEventListener("click", function () {
+
         openPopup("accountPopup");
+
         document.getElementById("registerForm").hidden = false;
+
         document.getElementById("loginForm").hidden = true;
+
       });
 
 
+      // SWITCH TO LOGIN
       document.getElementById("showLoginBtn").addEventListener("click", function () {
+
         document.getElementById("registerForm").hidden = true;
+
         document.getElementById("loginForm").hidden = false;
+
       });
 
 
+      // SWITCH TO REGISTER
       document.getElementById("showRegisterBtn").addEventListener("click", function () {
+
         document.getElementById("loginForm").hidden = true;
+
         document.getElementById("registerForm").hidden = false;
+
       });
 
 
+      // REGISTER FROM BUSINESS POPUP
       document.getElementById("registerFromBusinessBtn").addEventListener("click", function () {
+
         openPopup("accountPopup");
+
         document.getElementById("registerForm").hidden = false;
+
         document.getElementById("loginForm").hidden = true;
+
       });
 
 
+      // LOGIN FROM BUSINESS POPUP
       document.getElementById("loginFromBusinessBtn").addEventListener("click", function () {
+
         openPopup("accountPopup");
+
         document.getElementById("registerForm").hidden = true;
+
         document.getElementById("loginForm").hidden = false;
+
       });
 
 
+      // CURRENT YEAR
       document.getElementById("currentYear").textContent = new Date().getFullYear();
 
 
+      // PLAN SELECTION
       document.querySelectorAll(".choose-plan-btn").forEach(function (button) {
+
         button.addEventListener("click", function () {
 
           const plan = button.dataset.plan;
+
           const message = document.getElementById("selectedPlanMessage");
 
-          message.textContent = "You selected " + plan + ". Please create an account or login to continue.";
+          message.textContent =
+            "You selected " + plan +
+            ". Please create an account or login to continue.";
 
           setTimeout(function () {
             openPopup("accountPopup");
           }, 800);
 
         });
+
       });
-
-
-      const logoutButton = document.getElementById("logoutBtn");
-
-      if (logoutButton) {
-        logoutButton.addEventListener("click", function () {
-          alert("Connect Firebase authentication to activate logout.");
-        });
-      }
 
     });
   </script>
