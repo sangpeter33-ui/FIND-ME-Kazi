@@ -1,33 +1,29 @@
 
-/* ==========================================
+/* =========================================
    FIND-ME KAZI
-   COMPLETE WEBSITE JAVASCRIPT
-   Firebase Authentication, Password Recovery,
-   Firestore, Storage, Business Profiles,
-   Search, Categories and Pop-ups
-   ========================================== */
-
-import { auth, db, storage } from "./firebase.js";
+   Main JavaScript
+   Firebase v10.12.2
+========================================= */
 
 import {
+  onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged,
-  updateProfile,
+  sendPasswordResetEmail,
   GoogleAuthProvider,
   signInWithPopup,
-  sendPasswordResetEmail
+  updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
-  doc,
-  setDoc,
-  getDoc,
   collection,
+  doc,
+  getDoc,
+  getDocs,
   query,
   where,
-  getDocs,
+  setDoc,
   serverTimestamp,
   Timestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -38,28 +34,32 @@ import {
   getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
+import { auth, db, storage } from "./firebase.js";
 
-/* ==========================================
+
+/* =========================================
    GLOBAL VARIABLES
-   ========================================== */
+========================================= */
 
 let currentUser = null;
 let approvedBusinesses = [];
 let activeCategory = "all";
-let selectedPlan = "Free Trial";
+let selectedPlan = "free";
+let selectedPrice = 0;
+let selectedDuration = "30 days";
 
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+let currentLatitude = null;
+let currentLongitude = null;
+let currentAccuracy = null;
 
-const PLAN_LIMITS = {
-  "Free Trial": 3,
-  "Growth": 3,
-  "Verified Pro": 6
-};
+let existingBusiness = null;
+
+const googleProvider = new GoogleAuthProvider();
 
 
-/* ==========================================
-   GENERAL HELPERS
-   ========================================== */
+/* =========================================
+   HELPER FUNCTIONS
+========================================= */
 
 function getElement(id) {
   return document.getElementById(id);
@@ -71,11 +71,73 @@ function showMessage(id, message, type = "info") {
   if (!element) return;
 
   element.textContent = message;
-  element.className = type + "-message";
+  element.className = "form-message " + type + "-message";
+  element.hidden = false;
+}
+
+function clearMessage(id) {
+  const element = getElement(id);
+
+  if (!element) return;
+
+  element.textContent = "";
+  element.className = "form-message";
+  element.hidden = true;
+}
+
+function setButtonLoading(button, loading, loadingText = "Please wait...") {
+  if (!button) return;
+
+  if (loading) {
+    button.dataset.originalText = button.textContent;
+    button.textContent = loadingText;
+    button.disabled = true;
+  } else {
+    button.textContent = button.dataset.originalText || button.textContent;
+    button.disabled = false;
+  }
+}
+
+function safeText(value) {
+  return value === undefined || value === null ? "" : String(value);
 }
 
 function normalize(value) {
-  return String(value || "").trim().toLowerCase();
+  return safeText(value).trim().toLowerCase();
+}
+
+function formatError(error) {
+  const messages = {
+    "auth/email-already-in-use": "This email is already registered. Please log in.",
+    "auth/invalid-email": "Please enter a valid email address.",
+    "auth/weak-password": "Your password is too weak. Use at least 6 characters.",
+    "auth/user-not-found": "No account was found with this email.",
+    "auth/wrong-password": "Incorrect password. Please try again.",
+    "auth/invalid-credential": "Incorrect email or password.",
+    "auth/too-many-requests": "Too many attempts. Please wait and try again.",
+    "auth/popup-closed-by-user": "The sign-in window was closed.",
+    "auth/popup-blocked": "Your browser blocked the sign-in window. Allow popups and try again.",
+    "auth/network-request-failed": "Network problem. Check your internet connection.",
+    "permission-denied": "Permission denied. Check your Firebase security rules.",
+    "storage/unauthorized": "You do not have permission to upload this image."
+  };
+
+  return messages[error.code] ||
+    error.message ||
+    "Something went wrong. Please try again.";
+}
+
+
+/* =========================================
+   POPUP NAVIGATION
+========================================= */
+
+function closeAllPopups() {
+  document.querySelectorAll(".popup-modal").forEach(popup => {
+    popup.hidden = true;
+  });
+
+  document.body.classList.remove("popup-open");
 }
 
 function openPopup(id) {
@@ -83,517 +145,478 @@ function openPopup(id) {
 
   const popup = getElement(id);
 
-  if (popup) {
-    popup.hidden = false;
-    document.body.classList.add("popup-open");
-  }
+  if (!popup) return;
 
-  const navigation = getElement("mainNavigation");
+  popup.hidden = false;
+  document.body.classList.add("popup-open");
 
-  if (navigation) {
-    navigation.classList.remove("active");
-  }
+  const panel = popup.querySelector(".popup-container");
+
+  if (panel) panel.scrollTop = 0;
 }
 
-function closeAllPopups() {
-  document.querySelectorAll(".popup-overlay").forEach(popup => {
-    popup.hidden = true;
+function goHome() {
+  closeAllPopups();
+
+  document.querySelectorAll(".nav-link").forEach(link => {
+    link.classList.remove("active");
   });
 
-  document.body.classList.remove("popup-open");
+  const homeLink = document.querySelector('[data-home].nav-link');
+
+  if (homeLink) homeLink.classList.add("active");
+
+  closeMobileMenu();
 }
-
-function openLogin() {
-  openPopup("accountPopup");
-
-  if (getElement("registerForm")) {
-    getElement("registerForm").hidden = true;
-  }
-
-  if (getElement("loginForm")) {
-    getElement("loginForm").hidden = false;
-  }
-
-  if (getElement("accountModalTitle")) {
-    getElement("accountModalTitle").textContent = "Welcome Back";
-  }
-
-  if (getElement("accountModalDescription")) {
-    getElement("accountModalDescription").textContent =
-      "Login to manage your business profile.";
-  }
-}
-
-function openRegister() {
-  openPopup("accountPopup");
-
-  if (getElement("loginForm")) {
-    getElement("loginForm").hidden = true;
-  }
-
-  if (getElement("registerForm")) {
-    getElement("registerForm").hidden = false;
-  }
-
-  if (getElement("accountModalTitle")) {
-    getElement("accountModalTitle").textContent = "Create Your Account";
-  }
-
-  if (getElement("accountModalDescription")) {
-    getElement("accountModalDescription").textContent =
-      "Register to manage your business profile.";
-  }
-}
-
-function openDashboard() {
-  if (!currentUser) {
-    openLogin();
-    return;
-  }
-
-  openPopup("dashboardPopup");
-}
-
-
-/* ==========================================
-   POP-UP NAVIGATION
-   ========================================== */
 
 document.addEventListener("click", event => {
 
-  const trigger = event.target.closest("[data-popup]");
+  const popupButton = event.target.closest("[data-popup]");
 
-  if (trigger) {
-    openPopup(trigger.dataset.popup);
+  if (popupButton) {
+    const popupId = popupButton.dataset.popup;
+
+    if (popupButton.id === "openRegisterBtn") {
+      showRegisterMode();
+    } else if (popupButton.id === "openLoginBtn") {
+      showLoginMode();
+    }
+
+    openPopup(popupId);
+    closeMobileMenu();
+    return;
   }
 
-  const closeButton = event.target.closest(".popup-close");
+  const closeButton = event.target.closest("[data-close]");
 
   if (closeButton) {
-    closeAllPopups();
+    const popup = getElement(closeButton.dataset.close);
+
+    if (popup) {
+      popup.hidden = true;
+      document.body.classList.remove("popup-open");
+    }
+
+    return;
   }
 
-  if (event.target.classList.contains("popup-overlay")) {
-    closeAllPopups();
+  const homeButton = event.target.closest("[data-home]");
+
+  if (homeButton) {
+    event.preventDefault();
+    goHome();
+    return;
   }
+
+  const serviceButton = event.target.closest("[data-service-category]");
+
+  if (serviceButton) {
+    const category = serviceButton.dataset.serviceCategory;
+
+    closeAllPopups();
+    selectCategory(category);
+
+    const directory = document.querySelector(".directory-section");
+
+    if (directory) {
+      directory.scrollIntoView({ behavior: "smooth" });
+    }
+  }
+
+});
+
+document.querySelectorAll(".popup-modal").forEach(popup => {
+
+  popup.addEventListener("click", event => {
+    if (event.target === popup) {
+      popup.hidden = true;
+      document.body.classList.remove("popup-open");
+    }
+  });
 
 });
 
 document.addEventListener("keydown", event => {
+
   if (event.key === "Escape") {
     closeAllPopups();
+    closeMobileMenu();
   }
+
 });
 
+
+/* =========================================
+   MOBILE MENU
+========================================= */
+
 const menuToggle = getElement("menuToggle");
-const mainNavigation = getElement("mainNavigation");
+const mainNav = getElement("mainNav");
 
-if (menuToggle && mainNavigation) {
+function closeMobileMenu() {
+  if (!menuToggle || !mainNav) return;
+
+  mainNav.classList.remove("active");
+  menuToggle.setAttribute("aria-expanded", "false");
+}
+
+if (menuToggle && mainNav) {
+
   menuToggle.addEventListener("click", () => {
-    mainNavigation.classList.toggle("active");
-  });
-}
 
-getElement("openLoginBtn")?.addEventListener("click", openLogin);
+    const isOpen = mainNav.classList.toggle("active");
 
-getElement("openRegisterBtn")?.addEventListener("click", openRegister);
-
-getElement("showLoginBtn")?.addEventListener("click", openLogin);
-
-getElement("showRegisterBtn")?.addEventListener("click", openRegister);
-
-getElement("registerFromBusinessBtn")?.addEventListener("click", openRegister);
-
-getElement("loginFromBusinessBtn")?.addEventListener("click", openLogin);
-
-
-/* ==========================================
-   FIREBASE ACCOUNT REGISTRATION
-   ========================================== */
-
-const registerForm = getElement("registerForm");
-
-if (registerForm) {
-
-  registerForm.addEventListener("submit", async event => {
-
-    event.preventDefault();
-
-    const name = getElement("registerName").value.trim();
-    const email = getElement("registerEmail").value.trim();
-    const password = getElement("registerPassword").value;
-    const confirmPassword = getElement("confirmPassword").value;
-
-    if (password.length < 6) {
-      showMessage(
-        "registerMessage",
-        "Password must have at least 6 characters.",
-        "error"
-      );
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      showMessage(
-        "registerMessage",
-        "Your passwords do not match.",
-        "error"
-      );
-      return;
-    }
-
-    try {
-
-      showMessage("registerMessage", "Creating your account...");
-
-      const result = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      await updateProfile(result.user, {
-        displayName: name
-      });
-
-      await setDoc(
-        doc(db, "users", result.user.uid),
-        {
-          uid: result.user.uid,
-          name: name,
-          email: email,
-          createdAt: serverTimestamp()
-        },
-        { merge: true }
-      );
-
-      showMessage(
-        "registerMessage",
-        "Account created successfully!",
-        "success"
-      );
-
-      registerForm.reset();
-
-      currentUser = result.user;
-
-      updateAccountInterface(result.user);
-
-      setTimeout(() => {
-        openDashboard();
-      }, 1000);
-
-    } catch (error) {
-
-      console.error("Registration error:", error);
-
-      showMessage(
-        "registerMessage",
-        friendlyError(error),
-        "error"
-      );
-
-    }
+    menuToggle.setAttribute("aria-expanded", String(isOpen));
 
   });
 
 }
 
 
-/* ==========================================
-   FIREBASE LOGIN
-   ========================================== */
+/* =========================================
+   LOGIN AND REGISTER TABS
+========================================= */
 
-const loginForm = getElement("loginForm");
+function showLoginMode() {
 
-if (loginForm) {
+  const loginForm = getElement("loginForm");
+  const registerForm = getElement("registerForm");
 
-  loginForm.addEventListener("submit", async event => {
+  if (loginForm) loginForm.hidden = false;
+  if (registerForm) registerForm.hidden = true;
 
-    event.preventDefault();
+  getElement("loginTab")?.classList.add("active");
+  getElement("registerTab")?.classList.remove("active");
 
-    const email = getElement("loginEmail").value.trim();
-    const password = getElement("loginPassword").value;
+  if (getElement("accountTitle")) {
+    getElement("accountTitle").textContent = "Welcome Back";
+  }
 
-    try {
+  if (getElement("accountSubtitle")) {
+    getElement("accountSubtitle").textContent =
+      "Log in to manage your business account.";
+  }
 
-      showMessage("loginMessage", "Signing you in...");
-
-      const result = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      currentUser = result.user;
-
-      loginForm.reset();
-
-      showMessage(
-        "loginMessage",
-        "Login successful!",
-        "success"
-      );
-
-      updateAccountInterface(result.user);
-
-      setTimeout(openDashboard, 700);
-
-    } catch (error) {
-
-      console.error("Login error:", error);
-
-      showMessage(
-        "loginMessage",
-        friendlyError(error),
-        "error"
-      );
-
-    }
-
-  });
-
+  clearMessage("loginMessage");
+  clearMessage("registerMessage");
+  clearMessage("resetMessage");
 }
 
+function showRegisterMode() {
 
-/* ==========================================
+  const loginForm = getElement("loginForm");
+  const registerForm = getElement("registerForm");
+
+  if (loginForm) loginForm.hidden = true;
+  if (registerForm) registerForm.hidden = false;
+
+  getElement("loginTab")?.classList.remove("active");
+  getElement("registerTab")?.classList.add("active");
+
+  if (getElement("accountTitle")) {
+    getElement("accountTitle").textContent = "Create Your Account";
+  }
+
+  if (getElement("accountSubtitle")) {
+    getElement("accountSubtitle").textContent =
+      "Join FIND-ME KAZI and register your business.";
+  }
+
+  clearMessage("loginMessage");
+  clearMessage("registerMessage");
+  clearMessage("resetMessage");
+}
+
+getElement("loginTab")?.addEventListener("click", showLoginMode);
+getElement("registerTab")?.addEventListener("click", showRegisterMode);
+getElement("showRegisterBtn")?.addEventListener("click", showRegisterMode);
+getElement("showLoginBtn")?.addEventListener("click", showLoginMode);
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+getElement("loginForm")?.addEventListener("submit", async event => {
+
+  event.preventDefault();
+
+  const email = getElement("loginEmail").value.trim();
+  const password = getElement("loginPassword").value;
+
+  const button = getElement("loginBtn");
+
+  clearMessage("loginMessage");
+  clearMessage("resetMessage");
+
+  setButtonLoading(button, true, "Logging in...");
+
+  try {
+
+    await signInWithEmailAndPassword(auth, email, password);
+
+    showMessage("loginMessage", "Login successful!", "success");
+
+    getElement("loginForm").reset();
+
+    setTimeout(() => {
+      closeAllPopups();
+      openPopup("dashboardPopup");
+    }, 500);
+
+  } catch (error) {
+
+    showMessage("loginMessage", formatError(error), "error");
+
+  } finally {
+
+    setButtonLoading(button, false);
+
+  }
+
+});
+
+
+/* =========================================
    FORGOT PASSWORD
-   SEND RESET EMAIL THROUGH FIREBASE
-   ========================================== */
+========================================= */
 
-const forgotPasswordLink = getElement("forgotPasswordLink");
+getElement("forgotPasswordBtn")?.addEventListener("click", async () => {
 
-if (forgotPasswordLink) {
+  const email = getElement("loginEmail").value.trim();
 
-  forgotPasswordLink.addEventListener("click", async event => {
+  clearMessage("resetMessage");
 
-    event.preventDefault();
+  if (!email) {
+    showMessage(
+      "resetMessage",
+      "Enter your email address above first.",
+      "error"
+    );
+    getElement("loginEmail")?.focus();
+    return;
+  }
 
-    const email = getElement("loginEmail")?.value.trim();
+  try {
 
-    const message = getElement("resetMessage");
+    await sendPasswordResetEmail(auth, email);
 
-    const loginEmail = getElement("loginEmail");
+    showMessage(
+      "resetMessage",
+      "Password reset instructions have been sent if this email is registered. Check your inbox and spam folder.",
+      "success"
+    );
 
-    if (!email) {
+  } catch (error) {
 
-      showMessage(
-        "resetMessage",
-        "Please enter your registered email address first.",
-        "error"
-      );
+    showMessage("resetMessage", formatError(error), "error");
 
-      loginEmail?.focus();
+  }
 
-      return;
-    }
-
-    if (!loginEmail.checkValidity()) {
-
-      showMessage(
-        "resetMessage",
-        "Please enter a valid email address.",
-        "error"
-      );
-
-      loginEmail.focus();
-
-      return;
-    }
-
-    try {
-
-      forgotPasswordLink.style.pointerEvents = "none";
-      forgotPasswordLink.style.opacity = "0.6";
-
-      showMessage(
-        "resetMessage",
-        "Sending password recovery email..."
-      );
-
-      await sendPasswordResetEmail(auth, email);
-
-      showMessage(
-        "resetMessage",
-        "If an account exists for this email, a password reset link has been sent. Check your inbox and spam folder.",
-        "success"
-      );
-
-    } catch (error) {
-
-      console.error("Password recovery error:", error);
-
-      let messageText =
-        "Unable to send the recovery email. Please check your email and try again.";
-
-      if (error.code === "auth/invalid-email") {
-        messageText = "Please enter a valid email address.";
-      }
-
-      if (error.code === "auth/too-many-requests") {
-        messageText = "Too many attempts. Please wait before trying again.";
-      }
-
-      if (error.code === "auth/unauthorized-domain") {
-        messageText =
-          "This website domain is not authorized in Firebase.";
-      }
-
-      showMessage(
-        "resetMessage",
-        messageText,
-        "error"
-      );
-
-    } finally {
-
-      forgotPasswordLink.style.pointerEvents = "";
-      forgotPasswordLink.style.opacity = "";
-
-    }
-
-  });
-
-}
+});
 
 
-/* ==========================================
+/* =========================================
+   CREATE ACCOUNT
+========================================= */
+
+getElement("registerForm")?.addEventListener("submit", async event => {
+
+  event.preventDefault();
+
+  const name = getElement("registerName").value.trim();
+  const email = getElement("registerEmail").value.trim();
+  const password = getElement("registerPassword").value;
+  const confirmPassword = getElement("confirmPassword").value;
+
+  const button = getElement("registerBtn");
+
+  clearMessage("registerMessage");
+
+  if (password.length < 6) {
+    showMessage(
+      "registerMessage",
+      "Password must contain at least 6 characters.",
+      "error"
+    );
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    showMessage(
+      "registerMessage",
+      "Your passwords do not match.",
+      "error"
+    );
+    return;
+  }
+
+  setButtonLoading(button, true, "Creating account...");
+
+  try {
+
+    const result = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    await updateProfile(result.user, {
+      displayName: name
+    });
+
+    await setDoc(
+      doc(db, "users", result.user.uid),
+      {
+        name,
+        email,
+        createdAt: serverTimestamp()
+      },
+      { merge: true }
+    );
+
+    showMessage(
+      "registerMessage",
+      "Your account has been created successfully!",
+      "success"
+    );
+
+    getElement("registerForm").reset();
+
+    setTimeout(() => {
+      closeAllPopups();
+      openPopup("registerPopup");
+      updateRegistrationNotice();
+    }, 700);
+
+  } catch (error) {
+
+    showMessage("registerMessage", formatError(error), "error");
+
+  } finally {
+
+    setButtonLoading(button, false);
+
+  }
+
+});
+
+
+/* =========================================
    GOOGLE SIGN-IN
-   ========================================== */
+========================================= */
 
-const googleButton = getElement("googleSignInBtn");
+async function googleSignIn() {
 
-if (googleButton) {
+  try {
 
-  googleButton.addEventListener("click", async () => {
+    const result = await signInWithPopup(auth, googleProvider);
 
-    try {
+    const user = result.user;
 
-      const provider = new GoogleAuthProvider();
+    await setDoc(
+      doc(db, "users", user.uid),
+      {
+        name: user.displayName || "",
+        email: user.email || "",
+        updatedAt: serverTimestamp()
+      },
+      { merge: true }
+    );
 
-      const result = await signInWithPopup(auth, provider);
+    closeAllPopups();
+    openPopup("dashboardPopup");
 
-      currentUser = result.user;
+  } catch (error) {
 
-      await setDoc(
-        doc(db, "users", result.user.uid),
-        {
-          uid: result.user.uid,
-          name: result.user.displayName || "",
-          email: result.user.email || "",
-          updatedAt: serverTimestamp()
-        },
-        { merge: true }
-      );
+    const message = formatError(error);
 
-      updateAccountInterface(result.user);
-
-      openDashboard();
-
-    } catch (error) {
-
-      console.error("Google sign-in error:", error);
-
-      showMessage(
-        "loginMessage",
-        friendlyError(error),
-        "error"
-      );
-
+    if (getElement("loginForm") && !getElement("loginForm").hidden) {
+      showMessage("loginMessage", message, "error");
+    } else {
+      showMessage("registerMessage", message, "error");
     }
 
-  });
-
-}
-
-
-/* ==========================================
-   FRIENDLY FIREBASE ERROR MESSAGES
-   ========================================== */
-
-function friendlyError(error) {
-
-  const code = error.code || "";
-
-  const messages = {
-    "auth/email-already-in-use":
-      "This email already has an account. Please login.",
-
-    "auth/invalid-email":
-      "Please enter a valid email address.",
-
-    "auth/weak-password":
-      "Please choose a stronger password.",
-
-    "auth/user-not-found":
-      "No account was found with this email.",
-
-    "auth/wrong-password":
-      "Incorrect password.",
-
-    "auth/invalid-credential":
-      "Your email or password is incorrect.",
-
-    "auth/popup-closed-by-user":
-      "The sign-in window was closed.",
-
-    "auth/unauthorized-domain":
-      "This website domain is not authorized in Firebase.",
-
-    "auth/too-many-requests":
-      "Too many attempts. Please wait and try again."
-  };
-
-  return messages[code] ||
-    error.message ||
-    "Something went wrong. Please try again.";
-}
-
-
-/* ==========================================
-   ACCOUNT INTERFACE
-   ========================================== */
-
-function updateAccountInterface(user) {
-
-  const loginButton = getElement("openLoginBtn");
-  const registerButton = getElement("openRegisterBtn");
-  const logoutButton = getElement("logoutBtn");
-
-  if (loginButton) loginButton.hidden = !!user;
-
-  if (registerButton) registerButton.hidden = !!user;
-
-  if (logoutButton) logoutButton.hidden = !user;
-
-  if (getElement("signedInEmail")) {
-    getElement("signedInEmail").textContent =
-      user?.email || "Not signed in";
   }
 
 }
 
+getElement("googleLoginBtn")?.addEventListener("click", googleSignIn);
+getElement("googleRegisterBtn")?.addEventListener("click", googleSignIn);
 
-/* ==========================================
-   CHECK LOGIN STATUS
-   ========================================== */
+
+/* =========================================
+   AUTHENTICATION STATE
+========================================= */
 
 onAuthStateChanged(auth, async user => {
 
   currentUser = user;
 
-  updateAccountInterface(user);
+  updateRegistrationNotice();
 
   if (user) {
+
+    if (getElement("dashboardUserName")) {
+      getElement("dashboardUserName").textContent =
+        user.displayName || "Welcome";
+    }
+
+    if (getElement("dashboardUserEmail")) {
+      getElement("dashboardUserEmail").textContent = user.email || "";
+    }
+
+    if (getElement("accountInfoText")) {
+      getElement("accountInfoText").textContent =
+        "Signed in as " + (user.email || "");
+    }
+
     await loadMyBusinessProfile();
+
+  } else {
+
+    existingBusiness = null;
+
+    if (getElement("businessStatusText")) {
+      getElement("businessStatusText").textContent =
+        "Log in to manage your business listing.";
+    }
+
   }
 
 });
 
 
-/* ==========================================
+/* =========================================
+   REGISTRATION NOTICE
+========================================= */
+
+function updateRegistrationNotice() {
+
+  const notice = getElement("registrationAuthNotice");
+  const form = getElement("businessProfileForm");
+
+  if (!notice || !form) return;
+
+  if (currentUser) {
+    notice.hidden = true;
+    form.hidden = false;
+  } else {
+    notice.hidden = false;
+    form.hidden = true;
+  }
+
+}
+
+getElement("registrationLoginBtn")?.addEventListener("click", () => {
+  showLoginMode();
+  openPopup("accountPopup");
+});
+
+
+/* =========================================
    LOGOUT
-   ========================================== */
+========================================= */
 
 getElement("logoutBtn")?.addEventListener("click", async () => {
 
@@ -601,211 +624,202 @@ getElement("logoutBtn")?.addEventListener("click", async () => {
 
     await signOut(auth);
 
-    currentUser = null;
-
     closeAllPopups();
-
-    updateAccountInterface(null);
-
-    alert("You have logged out successfully.");
+    goHome();
 
   } catch (error) {
 
-    console.error("Logout error:", error);
-
-    alert("Unable to log out. Please try again.");
+    showMessage("dashboardMessage", formatError(error), "error");
 
   }
 
 });
 
 
-/* ==========================================
-   IMAGE VALIDATION
-   ========================================== */
+/* =========================================
+   PRICING PLAN SELECTION
+========================================= */
 
-function validateImage(file) {
+function updateSelectedPlan(plan, price, duration) {
 
-  if (!file) return false;
+  selectedPlan = plan;
+  selectedPrice = Number(price);
+  selectedDuration = duration;
 
-  if (!file.type.startsWith("image/")) {
-    throw new Error("Please select an image file.");
+  const names = {
+    free: "Free Trial",
+    growth: "Growth Plan",
+    verified_pro: "Verified Pro"
+  };
+
+  if (getElement("selectedPlan")) {
+    getElement("selectedPlan").value = selectedPlan;
   }
 
-  if (file.size > MAX_IMAGE_SIZE) {
-    throw new Error("Each image must be 5 MB or smaller.");
+  if (getElement("selectedPlanDisplay")) {
+    getElement("selectedPlanDisplay").value =
+      names[selectedPlan] || "Free Trial";
   }
-
-  return true;
 
 }
 
+document.querySelectorAll(".select-plan-btn").forEach(button => {
 
-/* ==========================================
-   IMAGE PREVIEW
-   ========================================== */
+  button.addEventListener("click", () => {
 
-function previewImage(file, container, append = false) {
+    updateSelectedPlan(
+      button.dataset.plan,
+      button.dataset.price,
+      button.dataset.duration
+    );
 
-  if (!file || !container) return;
+    if (currentUser) {
 
-  validateImage(file);
+      closeAllPopups();
+      openPopup("registerPopup");
+      updateRegistrationNotice();
 
-  if (!append) {
-    container.innerHTML = "";
-  }
+    } else {
 
-  const image = document.createElement("img");
+      showRegisterMode();
+      openPopup("accountPopup");
 
-  image.alt = "Selected business image";
-  image.src = URL.createObjectURL(file);
-
-  container.appendChild(image);
-
-}
-
-
-getElement("businessLogo")?.addEventListener("change", event => {
-
-  try {
-
-    const file = event.target.files[0];
-
-    if (file) {
-      previewImage(file, getElement("logoPreview"));
     }
 
-  } catch (error) {
-
-    event.target.value = "";
-
-    alert(error.message);
-
-  }
-
-});
-
-
-getElement("businessPhotos")?.addEventListener("change", event => {
-
-  try {
-
-    const files = Array.from(event.target.files);
-
-    const container = getElement("businessPhotoPreview");
-
-    if (!container) return;
-
-    container.innerHTML = "";
-
-    const limit = PLAN_LIMITS[selectedPlan] || 3;
-
-    if (files.length > limit) {
-      event.target.value = "";
-
-      throw new Error(
-        "Your selected plan allows up to " + limit + " photos."
-      );
-    }
-
-    files.forEach(file => {
-      previewImage(file, container, true);
-    });
-
-  } catch (error) {
-
-    event.target.value = "";
-
-    alert(error.message);
-
-  }
-
-});
-
-
-/* ==========================================
-   UPLOAD IMAGE TO FIREBASE STORAGE
-   ========================================== */
-
-async function uploadBusinessImage(file, folder) {
-
-  if (!file) return null;
-
-  validateImage(file);
-
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-
-  const path =
-    "businesses/" +
-    currentUser.uid +
-    "/" +
-    folder +
-    "/" +
-    Date.now() +
-    "_" +
-    safeName;
-
-  const imageReference = ref(storage, path);
-
-  await uploadBytes(imageReference, file, {
-    contentType: file.type
   });
 
-  return await getDownloadURL(imageReference);
+});
+
+
+/* =========================================
+   BUSINESS IMAGE PREVIEWS
+========================================= */
+
+function previewImages(inputId, previewId, multiple = false) {
+
+  const input = getElement(inputId);
+  const preview = getElement(previewId);
+
+  if (!input || !preview) return;
+
+  input.addEventListener("change", () => {
+
+    preview.replaceChildren();
+
+    const files = Array.from(input.files || []);
+
+    files.forEach(file => {
+
+      if (!file.type.startsWith("image/")) return;
+
+      const image = document.createElement("img");
+
+      image.alt = "Selected business image";
+      image.src = URL.createObjectURL(file);
+
+      preview.appendChild(image);
+
+    });
+
+  });
 
 }
 
+previewImages("businessLogo", "logoPreview");
+previewImages("businessPhotos", "photosPreview", true);
 
-/* ==========================================
-   GPS LOCATION
-   ========================================== */
 
-getElement("getBusinessLocation")?.addEventListener("click", () => {
+/* =========================================
+   GPS LOCATION CAPTURE
+========================================= */
 
-  const status = getElement("locationStatus");
+function updateLocationFields(latitude, longitude, accuracy) {
 
-  if (!navigator.geolocation) {
+  currentLatitude = latitude;
+  currentLongitude = longitude;
+  currentAccuracy = accuracy;
 
-    if (status) {
-      status.textContent =
-        "Location services are not supported by this browser.";
-    }
+  if (getElement("businessLatitude")) {
+    getElement("businessLatitude").value = latitude;
+  }
+
+  if (getElement("businessLongitude")) {
+    getElement("businessLongitude").value = longitude;
+  }
+
+  if (getElement("businessAccuracy")) {
+    getElement("businessAccuracy").value = accuracy;
+  }
+
+}
+
+getElement("captureBusinessLocation")?.addEventListener("click", () => {
+
+  const consent = getElement("businessConsent");
+
+  if (!consent?.checked) {
+
+    showMessage(
+      "businessFormMessage",
+      "Please tick the location consent box before capturing GPS location.",
+      "error"
+    );
 
     return;
 
   }
 
-  if (status) {
-    status.textContent = "Getting your location...";
+  if (!navigator.geolocation) {
+
+    showMessage(
+      "businessFormMessage",
+      "Your browser does not support GPS location.",
+      "error"
+    );
+
+    return;
+
   }
+
+  const status = getElement("businessLocationStatus");
+
+  if (status) status.textContent = "Getting your current location...";
 
   navigator.geolocation.getCurrentPosition(
 
     position => {
 
-      getElement("businessLatitude").value =
-        position.coords.latitude;
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      const accuracy = position.coords.accuracy;
 
-      getElement("businessLongitude").value =
-        position.coords.longitude;
-
-      getElement("businessAccuracy").value =
-        position.coords.accuracy;
+      updateLocationFields(latitude, longitude, accuracy);
 
       if (status) {
         status.textContent =
-          "Your location has been captured successfully.";
+          "Location captured successfully. Accuracy: " +
+          Math.round(accuracy) + " metres.";
       }
+
+      showMessage(
+        "businessFormMessage",
+        "Your GPS location has been captured.",
+        "success"
+      );
 
     },
 
     error => {
 
-      console.error("Location error:", error);
+      const messages = {
+        1: "Location permission was denied. You can still enter your address manually.",
+        2: "Your location could not be determined. Please try again.",
+        3: "Location request timed out. Please try again."
+      };
 
       if (status) {
-        status.textContent =
-          "Location unavailable. Please allow location permission and try again.";
+        status.textContent = messages[error.code] ||
+          "Unable to get your location.";
       }
 
     },
@@ -821,295 +835,254 @@ getElement("getBusinessLocation")?.addEventListener("click", () => {
 });
 
 
-/* ==========================================
-   SAVE BUSINESS PROFILE
-   ========================================== */
+/* =========================================
+   UPLOAD BUSINESS IMAGES
+========================================= */
 
-const businessProfileForm = getElement("businessProfileForm");
+async function uploadBusinessImage(file, path) {
 
-if (businessProfileForm) {
+  if (!file) return null;
 
-  businessProfileForm.addEventListener("submit", async event => {
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Only image files are allowed.");
+  }
 
-    event.preventDefault();
+  const maxSize = 5 * 1024 * 1024;
 
-    if (!currentUser) {
-      openLogin();
+  if (file.size > maxSize) {
+    throw new Error("Each image must be 5 MB or smaller.");
+  }
 
-      showMessage(
-        "profileMessage",
-        "Please login before saving your business.",
-        "error"
-      );
+  const imageRef = ref(storage, path);
 
-      return;
-    }
+  await uploadBytes(imageRef, file);
 
-    if (!getElement("businessConsent").checked) {
+  return await getDownloadURL(imageRef);
 
-      showMessage(
-        "profileMessage",
-        "Please confirm your business information.",
-        "error"
-      );
+}
 
-      return;
-    }
+async function uploadBusinessImages(userId) {
 
-    const saveButton = getElement("saveBusinessProfileBtn");
+  let logoUrl = existingBusiness?.logoUrl || "";
+  let photoUrls = Array.isArray(existingBusiness?.photoUrls)
+    ? [...existingBusiness.photoUrls]
+    : [];
 
-    const originalText = saveButton?.textContent;
+  const logoFile = getElement("businessLogo")?.files?.[0];
 
-    try {
+  if (logoFile) {
 
-      if (saveButton) {
-        saveButton.disabled = true;
-        saveButton.textContent = "Saving your profile...";
-      }
+    logoUrl = await uploadBusinessImage(
+      logoFile,
+      `businesses/${userId}/logo_${Date.now()}`
+    );
 
-      const existingReference = doc(
-        db,
-        "businesses",
-        currentUser.uid
-      );
+  }
 
-      const existingSnapshot = await getDoc(existingReference);
+  const photoFiles = Array.from(
+    getElement("businessPhotos")?.files || []
+  );
 
-      const existingBusiness = existingSnapshot.exists()
-        ? existingSnapshot.data()
-        : {};
+  for (const file of photoFiles) {
 
-      const businessName =
-        getElement("businessName").value.trim();
+    const url = await uploadBusinessImage(
+      file,
+      `businesses/${userId}/photos_${Date.now()}_${Math.random().toString(36).slice(2)}`
+    );
 
-      const category =
-        getElement("businessCategory").value;
+    if (url) photoUrls.push(url);
 
-      const ownerName =
-        getElement("businessOwnerName").value.trim();
+  }
 
-      const phone =
-        getElement("businessPhone").value.trim();
-
-      const whatsapp =
-        getElement("businessWhatsApp").value.trim();
-
-      const location =
-        getElement("businessLocation").value.trim();
-
-      const address =
-        getElement("businessAddress").value.trim();
-
-      const description =
-        getElement("businessDescription").value.trim();
-
-      const logoFile =
-        getElement("businessLogo").files[0];
-
-      const photoFiles = Array.from(
-        getElement("businessPhotos").files
-      );
-
-      const photoLimit = PLAN_LIMITS[selectedPlan] || 3;
-
-      if (photoFiles.length > photoLimit) {
-        throw new Error(
-          "Your selected plan allows up to " +
-          photoLimit +
-          " service photos."
-        );
-      }
-
-      photoFiles.forEach(validateImage);
-
-      let logoUrl = existingBusiness.logoUrl || "";
-
-      if (logoFile) {
-        logoUrl = await uploadBusinessImage(logoFile, "logo");
-      }
-
-      let photoUrls = existingBusiness.photoUrls || [];
-
-      if (photoFiles.length > 0) {
-
-        photoUrls = [];
-
-        for (const file of photoFiles) {
-
-          const url = await uploadBusinessImage(
-            file,
-            "photos"
-          );
-
-          photoUrls.push(url);
-
-        }
-
-      }
-
-      const latitude =
-        getElement("businessLatitude").value;
-
-      const longitude =
-        getElement("businessLongitude").value;
-
-      const accuracy =
-        getElement("businessAccuracy").value;
-
-      let planStatus = "payment_pending";
-
-      let trialEndsAt =
-        existingBusiness.trialEndsAt || null;
-
-      if (selectedPlan === "Free Trial") {
-
-        const trialAlreadyUsed =
-          existingBusiness.trialStartedAt;
-
-        if (!trialAlreadyUsed) {
-
-          const expiry = new Date();
-
-          expiry.setDate(expiry.getDate() + 30);
-
-          trialEndsAt = Timestamp.fromDate(expiry);
-
-          planStatus = "active";
-
-        } else {
-
-          planStatus = "trial_already_used";
-
-        }
-
-      }
-
-      const businessData = {
-
-        ownerUid: currentUser.uid,
-
-        ownerEmail: currentUser.email || "",
-
-        businessName: businessName,
-
-        category: category,
-
-        ownerName: ownerName,
-
-        phone: phone,
-
-        whatsapp: whatsapp,
-
-        location: location,
-
-        address: address,
-
-        description: description,
-
-        logoUrl: logoUrl,
-
-        photoUrls: photoUrls,
-
-        latitude: latitude ? Number(latitude) : null,
-
-        longitude: longitude ? Number(longitude) : null,
-
-        accuracy: accuracy ? Number(accuracy) : null,
-
-        plan: selectedPlan,
-
-        planStatus: planStatus,
-
-        trialStartedAt:
-          selectedPlan === "Free Trial" &&
-          !existingBusiness.trialStartedAt
-            ? serverTimestamp()
-            : existingBusiness.trialStartedAt || null,
-
-        trialEndsAt: trialEndsAt,
-
-        status: "pending",
-
-        updatedAt: serverTimestamp(),
-
-        createdAt:
-          existingBusiness.createdAt || serverTimestamp()
-
-      };
-
-      await setDoc(
-        existingReference,
-        businessData,
-        { merge: true }
-      );
-
-      showMessage(
-        "profileMessage",
-        "Your business profile has been submitted for review.",
-        "success"
-      );
-
-      if (getElement("profileStatus")) {
-        getElement("profileStatus").textContent =
-          "Pending review";
-      }
-
-      if (getElement("currentPlan")) {
-        getElement("currentPlan").textContent =
-          selectedPlan;
-      }
-
-      if (getElement("myBusinessListing")) {
-        getElement("myBusinessListing").textContent =
-          businessName + " — Submitted for review.";
-      }
-
-      businessProfileForm.reset();
-
-      if (getElement("logoPreview")) {
-        getElement("logoPreview").innerHTML = "";
-      }
-
-      if (getElement("businessPhotoPreview")) {
-        getElement("businessPhotoPreview").innerHTML = "";
-      }
-
-      if (getElement("locationStatus")) {
-        getElement("locationStatus").textContent =
-          "Location has not been captured.";
-      }
-
-      await loadMyBusinessProfile();
-
-    } catch (error) {
-
-      console.error("Business profile error:", error);
-
-      showMessage(
-        "profileMessage",
-        error.message || "Unable to save your business profile.",
-        "error"
-      );
-
-    } finally {
-
-      if (saveButton) {
-        saveButton.disabled = false;
-
-        saveButton.textContent =
-          originalText || "Save Business Profile";
-      }
-
-    }
-
-  });
+  return { logoUrl, photoUrls };
 
 }
 
 
-/* ==========================================
+/* =========================================
+   SAVE BUSINESS PROFILE
+========================================= */
+
+getElement("businessProfileForm")?.addEventListener("submit", async event => {
+
+  event.preventDefault();
+
+  if (!currentUser) {
+
+    showMessage(
+      "businessFormMessage",
+      "Please log in before registering your business.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  const consent = getElement("businessConsent")?.checked || false;
+
+  // GPS information is retained only when consent is selected.
+  if (!consent) {
+    updateLocationFields("", "", "");
+  }
+
+  const businessName = getElement("businessName").value.trim();
+  const category = getElement("businessCategory").value;
+  const owner = getElement("businessOwner").value.trim();
+  const phone = getElement("businessPhone").value.trim();
+  const whatsapp = getElement("businessWhatsapp").value.trim();
+  const county = getElement("businessCounty").value.trim();
+  const town = getElement("businessTown").value.trim();
+  const address = getElement("businessAddress").value.trim();
+  const description = getElement("businessDescription").value.trim();
+
+  if (!businessName || !category || !owner || !phone ||
+      !county || !town || !description) {
+
+    showMessage(
+      "businessFormMessage",
+      "Please complete all required fields.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  const button = getElement("saveBusinessBtn");
+
+  setButtonLoading(button, true, "Submitting business...");
+
+  clearMessage("businessFormMessage");
+
+  try {
+
+    const userId = currentUser.uid;
+
+    const businessRef = doc(db, "businesses", userId);
+
+    const previousSnapshot = await getDoc(businessRef);
+
+    const previousData = previousSnapshot.exists()
+      ? previousSnapshot.data()
+      : {};
+
+    existingBusiness = previousData;
+
+    const images = await uploadBusinessImages(userId);
+
+    const plan = selectedPlan ||
+      previousData.plan ||
+      "free";
+
+    let trialStartedAt = previousData.trialStartedAt || null;
+    let trialEndsAt = previousData.trialEndsAt || null;
+
+    let planStatus = "payment_pending";
+
+    if (plan === "free") {
+
+      if (!trialStartedAt) {
+
+        trialStartedAt = Timestamp.now();
+
+        const trialEndDate = new Date(
+          Date.now() + (30 * 24 * 60 * 60 * 1000)
+        );
+
+        trialEndsAt = Timestamp.fromDate(trialEndDate);
+
+        planStatus = "trial_active";
+
+      } else {
+
+        const trialEnd = trialEndsAt?.toDate
+          ? trialEndsAt.toDate()
+          : null;
+
+        planStatus = trialEnd && trialEnd > new Date()
+          ? "trial_active"
+          : "trial_expired";
+
+      }
+
+    }
+
+    const businessData = {
+
+      userId,
+
+      businessName,
+      category,
+      owner,
+      phone,
+      whatsapp,
+
+      county,
+      town,
+      address,
+      description,
+
+      logoUrl: images.logoUrl,
+      photoUrls: images.photoUrls,
+
+      latitude: consent ? currentLatitude : null,
+      longitude: consent ? currentLongitude : null,
+      accuracy: consent ? currentAccuracy : null,
+
+      locationConsent: consent,
+
+      plan,
+      planPrice: plan === "free" ? 0 : selectedPrice,
+      planDuration: selectedDuration,
+
+      planStatus,
+
+      trialStartedAt,
+      trialEndsAt,
+
+      status: "pending",
+
+      updatedAt: serverTimestamp(),
+
+      createdAt: previousData.createdAt || serverTimestamp()
+
+    };
+
+    await setDoc(businessRef, businessData, { merge: true });
+
+    existingBusiness = businessData;
+
+    showMessage(
+      "businessFormMessage",
+      "Your business has been submitted successfully. It will appear publicly after approval.",
+      "success"
+    );
+
+    updateDashboardBusinessInfo(businessData);
+
+    await loadApprovedBusinesses();
+
+  } catch (error) {
+
+    showMessage(
+      "businessFormMessage",
+      formatError(error),
+      "error"
+    );
+
+  } finally {
+
+    setButtonLoading(button, false);
+
+  }
+
+});
+
+
+/* =========================================
    LOAD MY BUSINESS PROFILE
-   ========================================== */
+========================================= */
 
 async function loadMyBusinessProfile() {
 
@@ -1117,162 +1090,227 @@ async function loadMyBusinessProfile() {
 
   try {
 
-    const reference = doc(
-      db,
-      "businesses",
-      currentUser.uid
+    const businessRef = doc(db, "businesses", currentUser.uid);
+
+    const snapshot = await getDoc(businessRef);
+
+    if (!snapshot.exists()) {
+
+      existingBusiness = null;
+
+      updateDashboardBusinessInfo(null);
+
+      return;
+
+    }
+
+    const data = snapshot.data();
+
+    existingBusiness = data;
+
+    const fields = {
+      businessName: data.businessName,
+      businessCategory: data.category,
+      businessOwner: data.owner,
+      businessPhone: data.phone,
+      businessWhatsapp: data.whatsapp,
+      businessCounty: data.county,
+      businessTown: data.town,
+      businessAddress: data.address,
+      businessDescription: data.description
+    };
+
+    Object.entries(fields).forEach(([id, value]) => {
+
+      const element = getElement(id);
+
+      if (element && value !== undefined && value !== null) {
+        element.value = value;
+      }
+
+    });
+
+    const plan = data.plan || "free";
+
+    const planNames = {
+      free: "Free Trial",
+      growth: "Growth Plan",
+      verified_pro: "Verified Pro"
+    };
+
+    updateSelectedPlan(
+      plan,
+      data.planPrice || 0,
+      data.planDuration || "30 days"
     );
 
-    const snapshot = await getDoc(reference);
-
-    if (!snapshot.exists()) return;
-
-    const business = snapshot.data();
-
-    if (getElement("businessName")) {
-      getElement("businessName").value =
-        business.businessName || "";
+    if (getElement("businessConsent")) {
+      getElement("businessConsent").checked =
+        data.locationConsent === true;
     }
 
-    if (getElement("businessCategory")) {
-      getElement("businessCategory").value =
-        business.category || "";
+    if (
+      data.latitude !== null &&
+      data.latitude !== undefined &&
+      data.longitude !== null &&
+      data.longitude !== undefined
+    ) {
+
+      updateLocationFields(
+        data.latitude,
+        data.longitude,
+        data.accuracy || ""
+      );
+
+      if (getElement("businessLocationStatus")) {
+        getElement("businessLocationStatus").textContent =
+          "Previously saved GPS location available.";
+      }
+
+    } else {
+
+      updateLocationFields("", "", "");
+
     }
 
-    if (getElement("businessOwnerName")) {
-      getElement("businessOwnerName").value =
-        business.ownerName || "";
+    // Restore existing image previews.
+    const logoPreview = getElement("logoPreview");
+
+    if (logoPreview) {
+
+      logoPreview.replaceChildren();
+
+      if (data.logoUrl) {
+
+        const image = document.createElement("img");
+        image.src = data.logoUrl;
+        image.alt = "Existing business logo";
+
+        logoPreview.appendChild(image);
+
+      }
+
     }
 
-    if (getElement("businessPhone")) {
-      getElement("businessPhone").value =
-        business.phone || "";
+    const photosPreview = getElement("photosPreview");
+
+    if (photosPreview) {
+
+      photosPreview.replaceChildren();
+
+      (data.photoUrls || []).forEach(url => {
+
+        const image = document.createElement("img");
+
+        image.src = url;
+        image.alt = "Existing business photo";
+
+        photosPreview.appendChild(image);
+
+      });
+
     }
 
-    if (getElement("businessWhatsApp")) {
-      getElement("businessWhatsApp").value =
-        business.whatsapp || "";
-    }
-
-    if (getElement("businessLocation")) {
-      getElement("businessLocation").value =
-        business.location || "";
-    }
-
-    if (getElement("businessAddress")) {
-      getElement("businessAddress").value =
-        business.address || "";
-    }
-
-    if (getElement("businessDescription")) {
-      getElement("businessDescription").value =
-        business.description || "";
-    }
-
-    selectedPlan = business.plan || "Free Trial";
-
-    if (getElement("currentPlan")) {
-      getElement("currentPlan").textContent =
-        selectedPlan;
-    }
-
-    if (getElement("profileStatus")) {
-      getElement("profileStatus").textContent =
-        business.status || "Pending review";
-    }
-
-    if (getElement("myBusinessListing")) {
-      getElement("myBusinessListing").textContent =
-        (business.businessName || "Business") +
-        " — " +
-        (business.status || "Pending review");
-    }
-
-    if (getElement("photoLimitMessage")) {
-      getElement("photoLimitMessage").textContent =
-        selectedPlan +
-        ": Up to " +
-        (PLAN_LIMITS[selectedPlan] || 3) +
-        " service photos.";
-    }
+    updateDashboardBusinessInfo(data);
 
   } catch (error) {
 
-    console.error("Loading business profile:", error);
+    console.error("Business profile loading error:", error);
 
   }
 
 }
 
 
-/* ==========================================
-   PLAN SELECTION
-   ========================================== */
+/* =========================================
+   DASHBOARD INFORMATION
+========================================= */
 
-document.querySelectorAll(".choose-plan-btn").forEach(button => {
+function updateDashboardBusinessInfo(data) {
 
-  button.addEventListener("click", () => {
+  const statusText = getElement("businessStatusText");
+  const planText = getElement("currentPlanText");
 
-    selectedPlan = button.dataset.plan || "Free Trial";
+  if (!data) {
 
-    const message = getElement("selectedPlanMessage");
-
-    if (message) {
-
-      if (selectedPlan === "Free Trial") {
-
-        message.textContent =
-          "Free Trial selected. Create an account to continue.";
-
-      } else {
-
-        message.textContent =
-          selectedPlan +
-          " selected. Payment and activation must be confirmed before premium access starts.";
-
-      }
-
+    if (statusText) {
+      statusText.textContent = "No business listing found.";
     }
 
-    if (currentUser) {
-
-      if (getElement("currentPlan")) {
-        getElement("currentPlan").textContent =
-          selectedPlan;
-      }
-
-      if (getElement("photoLimitMessage")) {
-        getElement("photoLimitMessage").textContent =
-          selectedPlan +
-          ": Up to " +
-          (PLAN_LIMITS[selectedPlan] || 3) +
-          " service photos.";
-      }
-
-      openDashboard();
-
-    } else {
-
-      openRegister();
-
+    if (planText) {
+      planText.textContent = "No active business plan.";
     }
 
-  });
+    return;
+
+  }
+
+  const status = data.status || "pending";
+
+  const statusNames = {
+    approved: "Approved - Public listing",
+    pending: "Pending approval",
+    rejected: "Not approved",
+    suspended: "Suspended"
+  };
+
+  if (statusText) {
+    statusText.textContent =
+      statusNames[status] || status;
+  }
+
+  const planNames = {
+    free: "Free Trial",
+    growth: "Growth Plan",
+    verified_pro: "Verified Pro"
+  };
+
+  if (planText) {
+    planText.textContent =
+      (planNames[data.plan] || "Free Trial") +
+      " - " + (data.planStatus || "Not set");
+  }
+
+}
+
+
+/* =========================================
+   EDIT BUSINESS PROFILE
+========================================= */
+
+getElement("editBusinessBtn")?.addEventListener("click", () => {
+
+  if (!currentUser) {
+
+    showLoginMode();
+    openPopup("accountPopup");
+
+    return;
+
+  }
+
+  closeAllPopups();
+  openPopup("registerPopup");
+  updateRegistrationNotice();
 
 });
 
 
-/* ==========================================
-   LOAD APPROVED PUBLIC BUSINESSES
-   ========================================== */
+/* =========================================
+   LOAD APPROVED BUSINESSES
+========================================= */
 
 async function loadApprovedBusinesses() {
 
-  const grid = getElement("approvedBusinessesGrid");
+  const loading = getElement("businessLoading");
+  const empty = getElement("noBusinesses");
 
-  if (!grid) return;
+  if (loading) {
+    loading.hidden = false;
+    loading.textContent = "Loading available businesses...";
+  }
 
-  grid.innerHTML = "<p>Loading businesses...</p>";
+  if (empty) empty.hidden = true;
 
   try {
 
@@ -1283,152 +1321,196 @@ async function loadApprovedBusinesses() {
 
     const snapshot = await getDocs(businessesQuery);
 
-    approvedBusinesses = [];
+    approvedBusinesses = snapshot.docs.map(document => ({
+      id: document.id,
+      ...document.data()
+    }));
 
-    snapshot.forEach(documentSnapshot => {
-
-      approvedBusinesses.push({
-        id: documentSnapshot.id,
-        ...documentSnapshot.data()
-      });
-
-    });
-
-    displayBusinesses(approvedBusinesses);
+    displayBusinesses();
 
   } catch (error) {
 
-    console.error("Loading approved businesses:", error);
+    console.error("Business loading error:", error);
 
-    grid.innerHTML =
-      "<p>Unable to load businesses right now. Please try again later.</p>";
+    if (loading) {
+      loading.textContent =
+        "Unable to load businesses. Please refresh the page.";
+    }
+
+  } finally {
+
+    if (loading) loading.hidden = true;
 
   }
 
 }
 
 
-/* ==========================================
+/* =========================================
    DISPLAY BUSINESS CARDS
-   ========================================== */
+========================================= */
 
-function displayBusinesses(businesses) {
+function displayBusinesses() {
 
-  const grid = getElement("approvedBusinessesGrid");
-
-  const emptyMessage = getElement("noBusinessesMessage");
+  const grid = getElement("serviceGrid");
+  const empty = getElement("noBusinesses");
 
   if (!grid) return;
 
-  grid.innerHTML = "";
+  grid.replaceChildren();
 
-  if (businesses.length === 0) {
+  const searchTerm = normalize(
+    getElement("businessSearch")?.value
+  );
 
-    if (emptyMessage) {
-      emptyMessage.hidden = false;
-    }
+  const filteredBusinesses = approvedBusinesses.filter(business => {
 
-    return;
+    const matchesCategory =
+      activeCategory === "all" ||
+      normalize(business.category) === normalize(activeCategory);
 
-  }
+    const searchableText = [
+      business.businessName,
+      business.category,
+      business.county,
+      business.town,
+      business.address,
+      business.description
+    ].map(normalize).join(" ");
 
-  if (emptyMessage) {
-    emptyMessage.hidden = true;
-  }
+    const matchesSearch =
+      !searchTerm || searchableText.includes(searchTerm);
 
-  businesses.forEach(business => {
+    return matchesCategory && matchesSearch;
+
+  });
+
+  filteredBusinesses.forEach(business => {
 
     const card = document.createElement("article");
 
     card.className = "business-card";
 
-    if (business.logoUrl) {
+    const imageUrl = business.logoUrl ||
+      business.photoUrls?.[0] ||
+      "";
+
+    if (imageUrl) {
 
       const image = document.createElement("img");
 
-      image.src = business.logoUrl;
-      image.alt = business.businessName || "Business logo";
+      image.src = imageUrl;
+      image.alt = business.businessName || "Business image";
       image.loading = "lazy";
 
       card.appendChild(image);
 
     }
 
-    const title = document.createElement("h3");
+    const content = document.createElement("div");
 
-    title.textContent =
-      business.businessName || "Business";
+    content.className = "business-card-content";
 
-    card.appendChild(title);
+    const category = document.createElement("span");
 
-    const category = document.createElement("p");
+    category.className = "business-category";
+    category.textContent = business.category || "Local Service";
 
-    category.textContent =
-      "Category: " + (business.category || "Not specified");
+    const name = document.createElement("h3");
 
-    card.appendChild(category);
-
-    const location = document.createElement("p");
-
-    location.textContent =
-      "Location: " + (business.location || "Not specified");
-
-    card.appendChild(location);
+    name.textContent = business.businessName || "Business";
 
     const description = document.createElement("p");
 
     description.textContent =
-      business.description || "";
+      business.description || "Contact this business for more information.";
 
-    card.appendChild(description);
+    const location = document.createElement("p");
 
-    if (Array.isArray(business.photoUrls)) {
+    location.textContent = [
+      business.town,
+      business.county
+    ].filter(Boolean).join(", ");
 
-      business.photoUrls.forEach(url => {
+    content.append(category, name, description, location);
 
-        const photo = document.createElement("img");
+    const actions = document.createElement("div");
 
-        photo.src = url;
-        photo.alt = "Service photo";
-        photo.loading = "lazy";
-
-        card.appendChild(photo);
-
-      });
-
-    }
+    actions.className = "business-card-actions";
 
     if (business.phone) {
 
-      const phoneButton = document.createElement("a");
+      const call = document.createElement("a");
 
-      phoneButton.className = "btn btn-primary";
-      phoneButton.href = "tel:" + business.phone;
-      phoneButton.textContent = "Call Business";
-
-      card.appendChild(phoneButton);
+      call.href = "tel:" + business.phone;
+      call.textContent = "Call";
+      actions.appendChild(call);
 
     }
 
-    if (business.whatsapp) {
+    if (business.whatsapp || business.phone) {
 
-      const whatsappNumber =
-        business.whatsapp.replace(/\D/g, "");
+      const whatsapp = document.createElement("a");
 
-      const whatsappButton = document.createElement("a");
+      const number = (business.whatsapp || business.phone)
+        .replace(/\D/g, "");
 
-      whatsappButton.className = "btn btn-outline";
+      whatsapp.href = "https://wa.me/" + number;
+      whatsapp.target = "_blank";
+      whatsapp.rel = "noopener";
+      whatsapp.textContent = "WhatsApp";
 
-      whatsappButton.href =
-        "https://wa.me/" + whatsappNumber;
+      actions.appendChild(whatsapp);
 
-      whatsappButton.target = "_blank";
+    }
 
-      whatsappButton.rel = "noopener noreferrer";
+    const addressText = [
+      business.address,
+      business.town,
+      business.county
+    ].filter(Boolean).join(", ");
 
-      whatsappButton.textContent = "WhatsApp";
+    if (addressText) {
 
-      card.appendChild(whatsappButton);
+      const map = document.createElement("a");
+
+      map.href =
+        "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent(addressText);
+
+      map.target = "_blank";
+      map.rel = "noopener";
+      map.textContent = "Map";
+
+      actions.appendChild(map);
+
+    }
+
+    content.appendChild(actions);
+
+    card.appendChild(content);
+
+    // Additional business photographs.
+    if (Array.isArray(business.photoUrls) &&
+        business.photoUrls.length > 1) {
+
+      const gallery = document.createElement("div");
+
+      gallery.className = "business-gallery";
+
+      business.photoUrls.slice(0, 3).forEach(url => {
+
+        const image = document.createElement("img");
+
+        image.src = url;
+        image.alt = "Service photograph";
+        image.loading = "lazy";
+
+        gallery.appendChild(image);
+
+      });
+
+      card.appendChild(gallery);
 
     }
 
@@ -1436,98 +1518,140 @@ function displayBusinesses(businesses) {
 
   });
 
+  if (empty) {
+    empty.hidden = filteredBusinesses.length !== 0;
+  }
+
 }
 
 
-/* ==========================================
-   SEARCH AND CATEGORY FILTERS
-   ========================================== */
+/* =========================================
+   SEARCH
+========================================= */
 
-function filterBusinesses() {
+getElement("searchBtn")?.addEventListener("click", displayBusinesses);
 
-  const search =
-    normalize(getElement("serviceSearch")?.value);
+getElement("businessSearch")?.addEventListener("input", displayBusinesses);
 
-  const location =
-    normalize(getElement("locationSearch")?.value);
+getElement("businessSearch")?.addEventListener("keydown", event => {
 
-  const results = approvedBusinesses.filter(business => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    displayBusinesses();
+  }
 
-    const matchesCategory =
-      activeCategory === "all" ||
-      normalize(business.category) === normalize(activeCategory);
+});
 
-    const searchableText = normalize(
-      business.businessName + " " +
-      business.category + " " +
-      business.description
-    );
 
-    const matchesSearch =
-      !search || searchableText.includes(search);
+/* =========================================
+   CATEGORY FILTERS
+========================================= */
 
-    const matchesLocation =
-      !location ||
-      normalize(business.location).includes(location) ||
-      normalize(business.address).includes(location);
+function selectCategory(category) {
 
-    return matchesCategory && matchesSearch && matchesLocation;
+  activeCategory = category;
+
+  document.querySelectorAll(".category-chip").forEach(button => {
+
+    const isActive =
+      normalize(button.dataset.category) === normalize(category);
+
+    button.classList.toggle("active", isActive);
 
   });
 
-  displayBusinesses(results);
+  displayBusinesses();
 
 }
 
-
-getElement("searchBtn")?.addEventListener(
-  "click",
-  filterBusinesses
-);
-
-getElement("serviceSearch")?.addEventListener(
-  "input",
-  filterBusinesses
-);
-
-getElement("locationSearch")?.addEventListener(
-  "input",
-  filterBusinesses
-);
-
-
-document.querySelectorAll(".category-btn").forEach(button => {
+document.querySelectorAll(".category-chip").forEach(button => {
 
   button.addEventListener("click", () => {
 
-    document.querySelectorAll(".category-btn").forEach(item => {
-      item.classList.remove("active");
-    });
-
-    button.classList.add("active");
-
-    activeCategory =
-      button.dataset.category || "all";
-
-    filterBusinesses();
+    selectCategory(button.dataset.category);
 
   });
 
 });
 
 
-/* ==========================================
-   INITIALISE WEBSITE
-   ========================================== */
+/* =========================================
+   OPTIONAL LOCATION SEARCH
+========================================= */
 
-const year = getElement("currentYear");
+getElement("getBusinessLocation")?.addEventListener("click", () => {
 
-if (year) {
-  year.textContent = new Date().getFullYear();
+  const status = getElement("locationStatus");
+
+  if (!navigator.geolocation) {
+
+    if (status) {
+      status.textContent = "Your browser does not support location search.";
+    }
+
+    return;
+
+  }
+
+  if (status) {
+    status.textContent = "Getting your location...";
+  }
+
+  navigator.geolocation.getCurrentPosition(
+
+    position => {
+
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      if (status) {
+        status.textContent = "Location received. Opening nearby map results.";
+      }
+
+      const mapUrl =
+        "https://www.google.com/maps/search/local+services/@" +
+        latitude + "," + longitude + ",14z";
+
+      window.open(mapUrl, "_blank", "noopener");
+
+    },
+
+    error => {
+
+      if (status) {
+
+        status.textContent =
+          error.code === 1
+            ? "Location permission was denied. You can search by area instead."
+            : "Unable to get your location. Please try again.";
+
+      }
+
+    },
+
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 60000
+    }
+
+  );
+
+});
+
+
+/* =========================================
+   PAGE INITIALIZATION
+========================================= */
+
+if (getElement("currentYear")) {
+  getElement("currentYear").textContent = new Date().getFullYear();
 }
+
+showLoginMode();
 
 loadApprovedBusinesses();
 
-console.log(
-  "FIND-ME KAZI JavaScript loaded successfully."
-);
+updateRegistrationNotice();
+
+console.log("FIND-ME KAZI JavaScript loaded successfully.");
