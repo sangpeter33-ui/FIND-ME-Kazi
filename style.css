@@ -1535,3 +1535,40 @@ textarea.form-control {
     font-size: 13px;
   }
 }
+.password-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.password-field input {
+  flex: 1;
+  min-width: 0;
+}
+
+.toggle-password {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 7px;
+  box-sizing: border-box;
+}
+
+#logoPreview img,
+#photosPreview img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 8px;
+}
