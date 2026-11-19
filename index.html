@@ -1,559 +1,752 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>FIND-ME KAZI | Find Local Services in Kenya</title>
-  <meta name="description" content="Discover local service providers across Kenya with FIND-ME KAZI. Find plumbers, electricians, mechanics, cleaners, tutors, delivery providers and more.">
+
+  <meta name="description" content="Find trusted local service providers across Kenya with FIND-ME KAZI. Discover plumbers, electricians, mechanics, tutors and more.">
+  <meta name="theme-color" content="#f47721">
+
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-  <!-- ================= HEADER & NAVIGATION ================= -->
+  <!-- HEADER -->
   <header class="site-header">
     <div class="container header-container">
-      <div class="brand-group">
-        <a href="#homePopup" class="brand-logo" data-popup="homePopup" aria-label="FIND-ME KAZI Home">
-          <span class="brand-name">FIND-ME <span class="brand-accent">KAZI</span></span>
-          <span class="brand-tagline">Find it. Tap it. Get it done.</span>
-        </a>
-      </div>
 
-      <button type="button" id="menuToggle" class="menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mainNavigation">
-        <span class="menu-bar"></span>
-        <span class="menu-bar"></span>
-        <span class="menu-bar"></span>
+      <a href="#" class="brand-group" data-home>
+        <span class="brand-logo">FIND-ME</span>
+        <span class="brand-tagline">Find it. Tap it. Get it done.</span>
+      </a>
+
+      <button class="menu-toggle" id="menuToggle"
+        type="button" aria-expanded="false" aria-controls="mainNav">
+        <span></span>
+        <span></span>
+        <span></span>
       </button>
 
-      <nav id="mainNavigation" class="main-nav" aria-label="Primary Navigation">
-        <ul class="nav-list">
-          <li><button type="button" class="nav-link" data-popup="homePopup">Home</button></li>
-          <li><button type="button" class="nav-link" data-popup="servicesPopup">Services</button></li>
-          <li><button type="button" class="nav-link" data-popup="pricingPopup">Pricing</button></li>
-          <li><button type="button" class="nav-link" data-popup="contactPopup">Contact</button></li>
-          <li><button type="button" class="nav-link" data-popup="dashboardPopup">Dashboard</button></li>
-        </ul>
-
-        <div class="auth-nav-actions">
-          <button type="button" id="openLoginBtn" class="btn btn-outline" data-popup="accountPopup">Login</button>
-          <button type="button" id="openRegisterBtn" class="btn btn-primary" data-popup="accountPopup">Register</button>
-          <button type="button" id="logoutBtn" class="btn btn-secondary" hidden>Logout</button>
-        </div>
+      <nav class="main-nav" id="mainNav">
+        <a href="#" class="nav-link active" data-home>Home</a>
+        <button type="button" class="nav-link" data-popup="servicesPopup">Services</button>
+        <button type="button" class="nav-link" data-popup="pricingPopup">Pricing</button>
+        <button type="button" class="nav-link" data-popup="contactPopup">Contact</button>
       </nav>
+
+      <div class="header-actions">
+        <button type="button" class="btn btn-outline" data-popup="accountPopup" id="openLoginBtn">
+          Log In
+        </button>
+        <button type="button" class="btn btn-primary" data-popup="accountPopup" id="openRegisterBtn">
+          Join Us
+        </button>
+      </div>
+
     </div>
   </header>
 
-  <!-- ================= MAIN CONTENT ================= -->
-  <main id="mainContent" class="main-content">
 
-    <!-- HOME POPUP / HERO SECTION -->
-    <section id="homePopup" class="popup-section active" role="region" aria-labelledby="homeHeading">
-      <div class="container">
-        <div class="hero-card">
-          <button type="button" class="close-popup close-btn" data-close="homePopup" aria-label="Close Home Section">&times;</button>
-          <p class="hero-tagline">Find it. Tap it. Get it done.</p>
-          <h1 id="homeHeading" class="hero-title">Find Local Services Near You.</h1>
-          <p class="hero-description">
-            Connect with local service providers across Kenya. Browse everyday services from plumbing, electrical repairs, and mechanics to cleaning, tutoring, and delivery—or list your business so local customers can reach you directly.
+  <!-- MAIN HOMEPAGE -->
+  <main id="homePopup">
+
+    <!-- HERO -->
+    <section class="hero-section">
+      <div class="container hero-content">
+
+        <div class="hero-text">
+          <span class="hero-label">KENYA'S LOCAL SERVICES DIRECTORY</span>
+
+          <h1>Find the right service provider near you.</h1>
+
+          <p>
+            Discover local professionals, compare services and connect
+            directly with businesses around Kenya.
           </p>
+
           <div class="hero-actions">
-            <button type="button" class="btn btn-primary btn-lg" data-popup="servicesPopup">Explore Services</button>
-            <button type="button" class="btn btn-outline btn-lg" data-popup="registerPopup">List Your Business</button>
+            <button type="button" class="btn btn-primary btn-large"
+              data-popup="servicesPopup">
+              Explore Services
+            </button>
+
+            <button type="button" class="btn btn-light btn-large"
+              data-popup="registerPopup">
+              Register Your Business
+            </button>
           </div>
-          <p class="trust-note">
-            Note: Business listings are subject to review before public display. Customers are advised to confirm service scope, pricing, and availability directly with service providers.
+        </div>
+
+        <div class="hero-card">
+          <div class="hero-card-icon">📍</div>
+          <h3>Services around you</h3>
+          <p>Find local businesses and connect with service providers.</p>
+          <div class="hero-card-footer">
+            <span>Simple</span>
+            <span>Local</span>
+            <span>Convenient</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- SEARCH -->
+    <section class="search-section">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="eyebrow">START YOUR SEARCH</span>
+          <h2>What service do you need?</h2>
+          <p>Search by service, business name or location.</p>
+        </div>
+
+        <div class="search-box">
+          <input type="search" id="businessSearch"
+            placeholder="e.g. Plumber, electrician, Nairobi..."
+            aria-label="Search businesses">
+
+          <button type="button" class="btn btn-primary" id="searchBtn">
+            Search
+          </button>
+        </div>
+
+        <div class="location-search">
+          <button type="button" class="btn btn-outline" id="getBusinessLocation">
+            <span>📍</span> Use My Location
+          </button>
+          <p id="locationStatus" aria-live="polite">
+            Location search is optional.
           </p>
         </div>
 
-        <!-- QUICK NAVIGATION -->
-        <section class="quick-nav-section" aria-labelledby="quickNavHeading">
-          <h2 id="quickNavHeading" class="section-heading">Quick Navigation</h2>
-          <div class="quick-nav-grid">
-            <article class="quick-card">
-              <h3>Explore Services</h3>
-              <p>Search by service category or town across Kenya to find local providers.</p>
-              <button type="button" class="btn btn-primary" data-popup="servicesPopup">Browse Directory</button>
-            </article>
-
-            <article class="quick-card">
-              <h3>List Your Business</h3>
-              <p>Create a business profile to showcase your skills and services to local customers.</p>
-              <button type="button" class="btn btn-primary" data-popup="registerPopup">Get Started</button>
-            </article>
-
-            <article class="quick-card">
-              <h3>View Pricing</h3>
-              <p>Compare our Free Trial, Growth, and Verified Pro business listing plans.</p>
-              <button type="button" class="btn btn-primary" data-popup="pricingPopup">See Plans</button>
-            </article>
-
-            <article class="quick-card">
-              <h3>Contact Us</h3>
-              <p>Have questions or feedback about FIND-ME KAZI? Reach out to our team.</p>
-              <button type="button" class="btn btn-primary" data-popup="contactPopup">Contact Support</button>
-            </article>
-          </div>
-        </section>
       </div>
     </section>
 
-    <!-- SERVICES DIRECTORY POPUP -->
-    <section id="servicesPopup" class="popup-section popup-modal" role="dialog" aria-modal="true" aria-labelledby="servicesHeading" hidden>
-      <div class="popup-container container">
-        <div class="popup-header">
-          <div>
-            <h2 id="servicesHeading">Local Services Directory</h2>
-            <p class="popup-subtitle">Search approved service providers across Kenya by skill or location.</p>
-          </div>
-          <button type="button" class="close-popup close-btn" data-close="servicesPopup" aria-label="Close Services Directory">&times;</button>
+
+    <!-- DIRECTORY -->
+    <section class="directory-section">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="eyebrow">DISCOVER LOCAL BUSINESSES</span>
+          <h2>Find a service provider</h2>
+          <p>Explore available businesses listed on FIND-ME KAZI.</p>
         </div>
 
-        <!-- Search & Filter Controls -->
-        <div class="search-bar-wrapper" role="search">
-          <div class="search-field-group">
-            <label for="serviceSearch" class="sr-only">Search by service or business name</label>
-            <input type="search" id="serviceSearch" class="form-control" placeholder="Search service (e.g., Plumber, Mechanic, Mama Fua)...">
-          </div>
-
-          <div class="search-field-group">
-            <label for="locationSearch" class="sr-only">Search by town, estate, or county</label>
-            <input type="search" id="locationSearch" class="form-control" placeholder="Location (e.g., Nairobi, Mombasa, Kisumu, Nakuru)...">
-          </div>
-
-          <button type="button" id="searchBtn" class="btn btn-primary">Search</button>
+        <div class="category-list" id="categoryFilters">
+          <button type="button" class="category-chip active" data-category="all">All</button>
+          <button type="button" class="category-chip" data-category="Plumbing">Plumbing</button>
+          <button type="button" class="category-chip" data-category="Electricians">Electricians</button>
+          <button type="button" class="category-chip" data-category="Mechanics">Mechanics</button>
+          <button type="button" class="category-chip" data-category="Cleaning Services">Cleaning</button>
+          <button type="button" class="category-chip" data-category="Phone Repair">Phone Repair</button>
+          <button type="button" class="category-chip" data-category="Taxi Services">Taxi</button>
+          <button type="button" class="category-chip" data-category="Bodaboda">Bodaboda</button>
+          <button type="button" class="category-chip" data-category="Tutors">Tutors</button>
+          <button type="button" class="category-chip" data-category="Delivery Service">Delivery</button>
         </div>
 
-        <!-- Category Filters -->
-        <div class="category-filter-wrapper">
-          <p class="filter-label">Filter by Category:</p>
-          <div id="categoryFilters" class="category-filters" role="group" aria-label="Service Categories">
-            <button type="button" class="category-chip active" data-category="All">All</button>
-            <button type="button" class="category-chip" data-category="Plumbing">Plumbing</button>
-            <button type="button" class="category-chip" data-category="Electricians">Electricians</button>
-            <button type="button" class="category-chip" data-category="Mechanics">Mechanics</button>
-            <button type="button" class="category-chip" data-category="Cleaning Services">Cleaning Services</button>
-            <button type="button" class="category-chip" data-category="Phone Repair">Phone Repair</button>
-            <button type="button" class="category-chip" data-category="Bodaboda">Bodaboda</button>
-            <button type="button" class="category-chip" data-category="Taxi Services">Taxi Services</button>
-            <button type="button" class="category-chip" data-category="Welders">Welders</button>
-            <button type="button" class="category-chip" data-category="Mama Fua">Mama Fua</button>
-            <button type="button" class="category-chip" data-category="Tutors">Tutors</button>
-            <button type="button" class="category-chip" data-category="Delivery Service">Delivery Service</button>
-            <button type="button" class="category-chip" data-category="Appliance Repair">Appliance Repair</button>
-            <button type="button" class="category-chip" data-category="Nail Technicians">Nail Technicians</button>
-            <button type="button" class="category-chip" data-category="Barbers & Hairdressers">Barbers &amp; Hairdressers</button>
-            <button type="button" class="category-chip" data-category="Carpenters">Carpenters</button>
-            <button type="button" class="category-chip" data-category="Painters & Decorators">Painters &amp; Decorators</button>
-            <button type="button" class="category-chip" data-category="Pest Control & Fumigation">Pest Control &amp; Fumigation</button>
-          </div>
+        <div class="directory-status" id="businessLoading">
+          Loading available businesses...
         </div>
 
-        <!-- Dynamic Status Messages & Listings Grid -->
-        <p id="businessLoadingMessage" class="status-message" role="status" aria-live="polite">Loading approved businesses...</p>
-        <p id="noBusinessesMessage" class="status-message" role="status" aria-live="polite" hidden>No approved businesses match your search criteria.</p>
+        <div class="businesses-grid" id="serviceGrid"></div>
 
-        <div id="approvedBusinessesGrid" class="businesses-grid" aria-live="polite">
-          <!-- Approved business cards are dynamically rendered here by script.js -->
+        <div class="empty-state" id="noBusinesses" hidden>
+          <h3>No businesses found</h3>
+          <p>Try another search term or category.</p>
         </div>
 
-        <div class="directory-disclaimer">
-          <p><strong>Customer Notice:</strong> Listings displayed here have passed initial platform review. Always confirm rates, terms, and service details directly with the provider before making payments.</p>
-        </div>
       </div>
     </section>
 
-    <!-- PRICING POPUP -->
-    <section id="pricingPopup" class="popup-section popup-modal" role="dialog" aria-modal="true" aria-labelledby="pricingHeading" hidden>
-      <div class="popup-container container">
-        <div class="popup-header">
-          <div>
-            <h2 id="pricingHeading">Business Listing Plans</h2>
-            <p class="popup-subtitle">Choose a listing plan to showcase your business on FIND-ME KAZI.</p>
-          </div>
-          <button type="button" class="close-popup close-btn" data-close="pricingPopup" aria-label="Close Pricing Plans">&times;</button>
+
+    <!-- CALL TO ACTION -->
+    <section class="cta-section">
+      <div class="container cta-content">
+        <div>
+          <span class="eyebrow">ARE YOU A SERVICE PROVIDER?</span>
+          <h2>Let customers find your business.</h2>
+          <p>Register your business and reach more potential customers.</p>
         </div>
 
-        <div class="pricing-notice-banner" role="note">
-          <p><strong>Manual Payment &amp; Activation Notice:</strong> Online payment processing is not integrated on this website. After selecting a plan and submitting your profile, payment instructions and plan activation are handled manually by our support team.</p>
-        </div>
-
-        <div class="pricing-grid">
-          <!-- Plan 1: Free Trial -->
-          <article class="pricing-card">
-            <div class="pricing-card-header">
-              <h3>Free Trial</h3>
-              <p class="price-amount">KSh 0</p>
-              <p class="price-duration">30 days</p>
-            </div>
-            <ul class="pricing-features">
-              <li>Create a business profile</li>
-              <li>Display approved business information</li>
-              <li>Standard directory visibility</li>
-            </ul>
-            <button type="button" class="btn btn-outline select-plan-btn" data-plan="Free Trial" data-price="KSh 0" data-duration="30 days">Select Free Trial</button>
-          </article>
-
-          <!-- Plan 2: Growth -->
-          <article class="pricing-card featured-plan">
-            <div class="pricing-card-header">
-              <h3>Growth</h3>
-              <p class="price-amount">KSh 500</p>
-              <p class="price-duration">6 months</p>
-            </div>
-            <ul class="pricing-features">
-              <li>Business profile listing</li>
-              <li>Customer contact options</li>
-              <li>6 months active directory listing</li>
-            </ul>
-            <button type="button" class="btn btn-primary select-plan-btn" data-plan="Growth" data-price="KSh 500" data-duration="6 months">Select Growth</button>
-          </article>
-
-          <!-- Plan 3: Verified Pro -->
-          <article class="pricing-card">
-            <div class="pricing-card-header">
-              <h3>Verified Pro</h3>
-              <p class="price-amount">KSh 1,000</p>
-              <p class="price-duration">1 year</p>
-            </div>
-            <ul class="pricing-features">
-              <li>Business profile listing</li>
-              <li>Customer contact options</li>
-              <li>Subject to the platform's actual verification process</li>
-            </ul>
-            <button type="button" class="btn btn-outline select-plan-btn" data-plan="Verified Pro" data-price="KSh 1,000" data-duration="1 year">Select Verified Pro</button>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONTACT POPUP -->
-    <section id="contactPopup" class="popup-section popup-modal" role="dialog" aria-modal="true" aria-labelledby="contactHeading" hidden>
-      <div class="popup-container container">
-        <div class="popup-header">
-          <div>
-            <h2 id="contactHeading">Contact FIND-ME KAZI</h2>
-            <p class="popup-subtitle">Find it. Tap it. Get it done.</p>
-          </div>
-          <button type="button" class="close-popup close-btn" data-close="contactPopup" aria-label="Close Contact Information">&times;</button>
-        </div>
-
-        <div class="contact-card">
-          <p>
-            Need assistance setting up your business profile, inquiring about listing activation, or sharing feedback about FIND-ME KAZI? Our customer support team is ready to assist you.
-          </p>
-
-          <div class="contact-details">
-            <div class="contact-item">
-              <strong>Support &amp; Feedback Email:</strong>
-              <p><a href="mailto:findme.feedback33@gmail.com">findme.feedback33@gmail.com</a></p>
-            </div>
-
-            <div class="contact-actions">
-              <a href="mailto:findme.feedback33@gmail.com?subject=FIND-ME%20KAZI%20Inquiry" class="btn btn-primary">Send Us an Email</a>
-            </div>
-          </div>
-
-          <p class="trust-note">
-            We only collect personal information necessary to respond to your support request or review your business listing.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ACCOUNT POPUP (LOGIN & REGISTRATION) -->
-    <section id="accountPopup" class="popup-section popup-modal" role="dialog" aria-modal="true" aria-labelledby="accountModalTitle" hidden>
-      <div class="popup-container container account-modal-box">
-        <div class="popup-header">
-          <div>
-            <h2 id="accountModalTitle">Sign In or Create an Account</h2>
-            <p id="accountModalDescription" class="popup-subtitle">Access your business owner dashboard or register a new account.</p>
-          </div>
-          <button type="button" class="close-popup close-btn" data-close="accountPopup" aria-label="Close Account Modal">&times;</button>
-        </div>
-
-        <!-- Account Mode Switcher -->
-        <div class="account-tabs" role="tablist" aria-label="Account Options">
-          <button type="button" id="showLoginBtn" class="tab-btn active">Login</button>
-          <button type="button" id="showRegisterBtn" class="tab-btn">Register</button>
-        </div>
-
-        <!-- LOGIN FORM -->
-        <form id="loginForm" class="auth-form" novalidate>
-          <div class="form-group">
-            <label for="loginEmail">Email Address <span class="required">*</span></label>
-            <input type="email" id="loginEmail" class="form-control" autocomplete="email" placeholder="you@example.com" required>
-          </div>
-
-          <div class="form-group">
-            <label for="loginPassword">Password <span class="required">*</span></label>
-            <input type="password" id="loginPassword" class="form-control" autocomplete="current-password" placeholder="Enter your password" required>
-          </div>
-
-          <button type="button" id="forgotPasswordBtn" class="text-button forgot-password">Forgot Password?</button>
-          <p class="field-hint">Enter your registered email address above before requesting a password reset link.</p>
-
-          <p id="loginMessage" role="status" aria-live="polite"></p>
-
-          <button type="submit" class="btn btn-primary btn-block">Login</button>
-        </form>
-
-        <!-- REGISTRATION FORM -->
-        <form id="registerForm" class="auth-form" hidden novalidate>
-          <div class="form-group">
-            <label for="registerName">Full Name <span class="required">*</span></label>
-            <input type="text" id="registerName" class="form-control" autocomplete="name" placeholder="Enter your full name" required>
-          </div>
-
-          <div class="form-group">
-            <label for="registerEmail">Email Address <span class="required">*</span></label>
-            <input type="email" id="registerEmail" class="form-control" autocomplete="email" placeholder="you@example.com" required>
-          </div>
-
-          <div class="form-group">
-            <label for="registerPassword">Password <span class="required">*</span></label>
-            <input type="password" id="registerPassword" class="form-control" autocomplete="new-password" placeholder="Create a password" required>
-          </div>
-
-          <div class="form-group">
-            <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
-            <input type="password" id="confirmPassword" class="form-control" autocomplete="new-password" placeholder="Re-enter your password" required>
-          </div>
-
-          <p id="registerMessage" role="status" aria-live="polite"></p>
-
-          <button type="submit" class="btn btn-primary btn-block">Create Account</button>
-        </form>
-
-        <!-- GOOGLE SIGN-IN -->
-        <div class="social-auth-divider">
-          <span>OR</span>
-        </div>
-        <button type="button" id="googleSignInBtn" class="btn btn-outline btn-block">Continue with Google</button>
-      </div>
-    </section>
-
-    <!-- BUSINESS REGISTRATION INFO POPUP -->
-    <section id="registerPopup" class="popup-section popup-modal" role="dialog" aria-modal="true" aria-labelledby="businessRegisterHeading" hidden>
-      <div class="popup-container container">
-        <div class="popup-header">
-          <div>
-            <h2 id="businessRegisterHeading">List Your Business on FIND-ME KAZI</h2>
-            <p class="popup-subtitle">Reach local customers searching for your services across Kenya.</p>
-          </div>
-          <button type="button" class="close-popup close-btn" data-close="registerPopup" aria-label="Close Business Registration Information">&times;</button>
-        </div>
-
-        <div class="business-onboarding-card">
-          <p>
-            Service providers across Kenya can create an account, submit their business profile, select a listing plan, and manage their business details from the Business Owner Dashboard.
-          </p>
-          <ul class="onboarding-steps">
-            <li><strong>Step 1:</strong> Create a free account or log in to your existing provider account.</li>
-            <li><strong>Step 2:</strong> Complete your business profile with your service category, location, and contact details.</li>
-            <li><strong>Step 3:</strong> Submit your profile for platform review before public listing.</li>
-          </ul>
-
-          <div class="onboarding-actions">
-            <button type="button" id="registerFromBusinessBtn" class="btn btn-primary">Register Your Business</button>
-            <button type="button" id="loginFromBusinessBtn" class="btn btn-outline">Login</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- BUSINESS OWNER DASHBOARD POPUP -->
-    <section id="dashboardPopup" class="popup-section popup-modal" role="dialog" aria-modal="true" aria-labelledby="dashboardHeading" hidden>
-      <div class="popup-container container">
-        <div class="popup-header">
-          <div>
-            <h2 id="dashboardHeading">Business Owner Dashboard</h2>
-            <p class="popup-subtitle">Manage your business profile, photos, and listing details.</p>
-          </div>
-          <button type="button" class="close-popup close-btn" data-close="dashboardPopup" aria-label="Close Business Dashboard">&times;</button>
-        </div>
-
-        <!-- Account Summary Bar -->
-        <div class="dashboard-account-summary">
-          <div class="summary-item">
-            <span class="summary-label">Signed In As:</span>
-            <strong id="signedInEmail">Not signed in</strong>
-          </div>
-          <div class="summary-item">
-            <span class="summary-label">Current Plan:</span>
-            <strong id="currentPlan">Free Trial</strong>
-          </div>
-          <div class="summary-item">
-            <span class="summary-label">Profile Status:</span>
-            <strong id="profileStatus">Draft</strong>
-          </div>
-        </div>
-
-        <div class="dashboard-notice" role="note">
-          <p><strong>Review &amp; Privacy Notice:</strong> Submitted business information is subject to review before appearing publicly in the directory. We only collect information needed to display and manage your business listing.</p>
-        </div>
-
-        <!-- Business Profile Form -->
-        <form id="businessProfileForm" class="dashboard-form" novalidate>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="businessName">Business Name <span class="required">*</span></label>
-              <input type="text" id="businessName" class="form-control" placeholder="e.g., Kamau Plumbing Services" required>
-            </div>
-
-            <div class="form-group">
-              <label for="businessCategory">Service Category <span class="required">*</span></label>
-              <select id="businessCategory" class="form-control" required>
-                <option value="">-- Select a Category --</option>
-                <option value="Plumbing">Plumbing</option>
-                <option value="Electricians">Electricians</option>
-                <option value="Mechanics">Mechanics</option>
-                <option value="Cleaning Services">Cleaning Services</option>
-                <option value="Phone Repair">Phone Repair</option>
-                <option value="Bodaboda">Bodaboda</option>
-                <option value="Taxi Services">Taxi Services</option>
-                <option value="Welders">Welders</option>
-                <option value="Mama Fua">Mama Fua</option>
-                <option value="Tutors">Tutors</option>
-                <option value="Delivery Service">Delivery Service</option>
-                <option value="Appliance Repair">Appliance Repair</option>
-                <option value="Nail Technicians">Nail Technicians</option>
-                <option value="Barbers & Hairdressers">Barbers &amp; Hairdressers</option>
-                <option value="Carpenters">Carpenters</option>
-                <option value="Painters & Decorators">Painters &amp; Decorators</option>
-                <option value="Pest Control & Fumigation">Pest Control &amp; Fumigation</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="businessOwnerName">Owner / Contact Person Name <span class="required">*</span></label>
-              <input type="text" id="businessOwnerName" class="form-control" placeholder="Full name of business owner" required>
-            </div>
-
-            <div class="form-group">
-              <label for="businessPhone">Phone Number <span class="required">*</span></label>
-              <input type="tel" id="businessPhone" class="form-control" placeholder="e.g., 0712 345 678" required>
-            </div>
-
-            <div class="form-group">
-              <label for="businessWhatsApp">WhatsApp Number (Optional)</label>
-              <input type="tel" id="businessWhatsApp" class="form-control" placeholder="e.g., 254712345678">
-            </div>
-
-            <div class="form-group">
-              <label for="businessLocation">Town / Area / County <span class="required">*</span></label>
-              <input type="text" id="businessLocation" class="form-control" placeholder="e.g., Westlands, Nairobi" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="businessAddress">Street / Landmark / Building Address</label>
-            <input type="text" id="businessAddress" class="form-control" placeholder="e.g., Near Sarit Centre, Ground Floor">
-          </div>
-
-          <div class="form-group">
-            <label for="businessDescription">Business Description <span class="required">*</span></label>
-            <textarea id="businessDescription" class="form-control" rows="4" placeholder="Describe your services, experience, working hours, and areas served..." required></textarea>
-          </div>
-
-          <!-- Business Logo & Photos -->
-          <fieldset class="form-fieldset">
-            <legend>Business Logo &amp; Work Photos</legend>
-
-            <div class="form-group">
-              <label for="businessLogo">Business Logo</label>
-              <input type="file" id="businessLogo" class="form-control" accept="image/*">
-              <div id="logoPreview" class="image-preview-box" aria-live="polite"></div>
-            </div>
-
-            <div class="form-group">
-              <label for="businessPhotos">Work / Service Photos</label>
-              <input type="file" id="businessPhotos" class="form-control" accept="image/*" multiple>
-              <p id="photoLimitMessage" class="field-hint" role="status" aria-live="polite"></p>
-              <div id="businessPhotoPreview" class="photo-preview-grid" aria-live="polite"></div>
-            </div>
-          </fieldset>
-
-          <!-- Optional User-Triggered Business Location -->
-          <fieldset class="form-fieldset">
-            <legend>Optional Business Pin Location</legend>
-            <p class="field-hint">
-              Your device location is never accessed automatically. Exact coordinates are kept private and are only used to help match nearby service areas if you choose to capture them.
-            </p>
-
-            <div class="consent-row">
-              <input type="checkbox" id="businessConsent">
-              <label for="businessConsent">
-                I consent to capturing my current device location to record my approximate business service area.
-              </label>
-            </div>
-
-            <div class="location-controls">
-              <button type="button" id="getBusinessLocation" class="btn btn-outline">Capture Current Location</button>
-              <span id="locationStatus" class="status-text" role="status" aria-live="polite"></span>
-            </div>
-
-            <input type="hidden" id="businessLatitude">
-            <input type="hidden" id="businessLongitude">
-            <input type="hidden" id="businessAccuracy">
-          </fieldset>
-
-          <p id="profileMessage" class="status-message" role="status" aria-live="polite"></p>
-
-          <button type="submit" id="saveBusinessProfileBtn" class="btn btn-primary btn-lg">Save Business Profile</button>
-        </form>
-
-        <!-- Current Saved Listing Preview -->
-        <section class="my-listing-section" aria-labelledby="myListingHeading">
-          <h3 id="myListingHeading">My Business Listing</h3>
-          <div id="myBusinessListing" class="my-business-listing" aria-live="polite">
-            <!-- Owner's saved business profile summary rendered dynamically by script.js -->
-          </div>
-        </section>
+        <button type="button" class="btn btn-light btn-large"
+          data-popup="registerPopup">
+          Register Your Business
+        </button>
       </div>
     </section>
 
   </main>
 
-  <!-- ================= FOOTER ================= -->
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div class="footer-brand">
-        <h3>FIND-ME <span class="brand-accent">KAZI</span></h3>
-        <p class="footer-tagline">Find it. Tap it. Get it done.</p>
-        <p class="footer-description">
-          A local services directory helping people across Kenya discover local service providers and helping small businesses showcase their services.
+
+  <!-- SERVICES POPUP -->
+  <section class="popup-modal" id="servicesPopup" hidden>
+    <div class="popup-container">
+
+      <button type="button" class="popup-close" data-close="servicesPopup"
+        aria-label="Close">&times;</button>
+
+      <div class="popup-heading">
+        <span class="eyebrow">OUR DIRECTORY</span>
+        <h2>Explore Services</h2>
+        <p>Find service providers in different categories.</p>
+      </div>
+
+      <div class="services-grid">
+
+        <button class="service-card" type="button" data-service-category="Plumbing">
+          <span>🔧</span><strong>Plumbing</strong>
+          <small>Plumbers and water services</small>
+        </button>
+
+        <button class="service-card" type="button" data-service-category="Electricians">
+          <span>💡</span><strong>Electricians</strong>
+          <small>Electrical installation and repair</small>
+        </button>
+
+        <button class="service-card" type="button" data-service-category="Mechanics">
+          <span>🚗</span><strong>Mechanics</strong>
+          <small>Vehicle repair and maintenance</small>
+        </button>
+
+        <button class="service-card" type="button" data-service-category="Cleaning Services">
+          <span>🧹</span><strong>Cleaning Services</strong>
+          <small>Home and office cleaning</small>
+        </button>
+
+        <button class="service-card" type="button" data-service-category="Phone Repair">
+          <span>📱</span><strong>Phone Repair</strong>
+          <small>Mobile phone repair services</small>
+        </button>
+
+        <button class="service-card" type="button" data-service-category="Taxi Services">
+          <span>🚕</span><strong>Taxi Services</strong>
+          <small>Transport and taxi providers</small>
+        </button>
+
+        <button class="service-card" type="button" data-service-category="Bodaboda">
+          <span>🏍️</span><strong>Bodaboda</strong>
+          <small>Local motorcycle transport</small>
+        </button>
+
+        <button class="service-card" type="button" data-service-category="Tutors">
+          <span>📚</span><strong>Tutors</strong>
+          <small>Private and academic tutors</small>
+        </button>
+
+        <button class="service-card" type="button" data-service-category="Delivery Service">
+          <span>📦</span><strong>Delivery Services</strong>
+          <small>Local delivery providers</small>
+        </button>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- PRICING POPUP -->
+  <section class="popup-modal" id="pricingPopup" hidden>
+    <div class="popup-container">
+
+      <button type="button" class="popup-close" data-close="pricingPopup"
+        aria-label="Close">&times;</button>
+
+      <div class="popup-heading">
+        <span class="eyebrow">BUSINESS LISTING PLANS</span>
+        <h2>Choose Your Plan</h2>
+        <p>Choose a listing plan for your business.</p>
+      </div>
+
+      <div class="pricing-grid">
+
+        <article class="pricing-card">
+          <h3>Free Trial</h3>
+          <div class="price-amount">KSh 0</div>
+          <div class="price-duration">30 days</div>
+
+          <ul class="pricing-features">
+            <li>Business listing</li>
+            <li>Business contact details</li>
+            <li>Basic business profile</li>
+            <li>Subject to approval</li>
+          </ul>
+
+          <button type="button" class="btn btn-outline select-plan-btn"
+            data-plan="free" data-price="0" data-duration="30 days">
+            Start Free Trial
+          </button>
+        </article>
+
+
+        <article class="pricing-card featured-plan">
+          <span class="plan-label">GROWTH</span>
+          <h3>Growth Plan</h3>
+          <div class="price-amount">KSh 500</div>
+          <div class="price-duration">6 months</div>
+
+          <ul class="pricing-features">
+            <li>Business listing</li>
+            <li>Business contact details</li>
+            <li>Business photos</li>
+            <li>Improved listing visibility</li>
+            <li>Subject to approval</li>
+          </ul>
+
+          <button type="button" class="btn btn-primary select-plan-btn"
+            data-plan="growth" data-price="500" data-duration="6 months">
+            Choose Growth
+          </button>
+        </article>
+
+
+        <article class="pricing-card">
+          <h3>Verified Pro</h3>
+          <div class="price-amount">KSh 1,000</div>
+          <div class="price-duration">1 year</div>
+
+          <ul class="pricing-features">
+            <li>Business listing</li>
+            <li>Business contact details</li>
+            <li>Business photos</li>
+            <li>Verified Pro review</li>
+            <li>Subject to approval</li>
+          </ul>
+
+          <button type="button" class="btn btn-outline select-plan-btn"
+            data-plan="verified_pro" data-price="1000" data-duration="1 year">
+            Choose Verified Pro
+          </button>
+        </article>
+
+      </div>
+
+      <p class="pricing-note">
+        Selecting a paid plan does not complete payment. Payment instructions
+        and confirmation must be handled separately.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- CONTACT POPUP -->
+  <section class="popup-modal" id="contactPopup" hidden>
+    <div class="popup-container popup-narrow">
+
+      <button type="button" class="popup-close" data-close="contactPopup"
+        aria-label="Close">&times;</button>
+
+      <div class="popup-heading">
+        <span class="eyebrow">GET IN TOUCH</span>
+        <h2>Let's Work Together</h2>
+        <p>Have a question or need help with FIND-ME KAZI?</p>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-icon">✉️</div>
+        <h3>Email Support</h3>
+        <a href="mailto:findme.feedback33@gmail.com">
+          findme.feedback33@gmail.com
+        </a>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-icon">💬</div>
+        <h3>WhatsApp Support</h3>
+        <p>Contact us through WhatsApp for assistance.</p>
+        <a class="btn btn-primary"
+          href="https://wa.me/"
+          target="_blank" rel="noopener">
+          Open WhatsApp
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- LOGIN / REGISTER POPUP -->
+  <section class="popup-modal" id="accountPopup" hidden>
+    <div class="popup-container popup-narrow">
+
+      <button type="button" class="popup-close" data-close="accountPopup"
+        aria-label="Close">&times;</button>
+
+      <div class="popup-heading">
+        <span class="eyebrow">YOUR FIND-ME ACCOUNT</span>
+        <h2 id="accountTitle">Welcome Back</h2>
+        <p id="accountSubtitle">Log in to manage your business account.</p>
+      </div>
+
+      <div class="account-tabs">
+        <button type="button" class="account-tab active" id="loginTab">
+          Log In
+        </button>
+        <button type="button" class="account-tab" id="registerTab">
+          Create Account
+        </button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm" class="account-form">
+
+        <div class="form-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" class="form-control"
+            placeholder="Enter your email" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" class="form-control"
+            placeholder="Enter your password" required
+            autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
+          Log In
+        </button>
+
+        <button type="button" class="text-button" id="forgotPasswordBtn">
+          Forgot Password?
+        </button>
+
+        <div id="resetMessage" class="form-message" aria-live="polite"></div>
+        <div id="loginMessage" class="form-message" aria-live="polite"></div>
+
+        <div class="form-divider"><span>OR</span></div>
+
+        <button type="button" class="btn btn-google btn-full" id="googleLoginBtn">
+          Continue with Google
+        </button>
+
+        <p class="account-switch">
+          Don't have an account?
+          <button type="button" class="text-button" id="showRegisterBtn">
+            Create one
+          </button>
         </p>
+
+      </form>
+
+
+      <!-- REGISTER FORM -->
+      <form id="registerForm" class="account-form" hidden>
+
+        <div class="form-group">
+          <label for="registerName">Full Name</label>
+          <input type="text" id="registerName" class="form-control"
+            placeholder="Enter your full name" required autocomplete="name">
+        </div>
+
+        <div class="form-group">
+          <label for="registerEmail">Email Address</label>
+          <input type="email" id="registerEmail" class="form-control"
+            placeholder="Enter your email" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="registerPassword">Create Password</label>
+          <input type="password" id="registerPassword" class="form-control"
+            placeholder="At least 6 characters" minlength="6"
+            required autocomplete="new-password">
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" class="form-control"
+            placeholder="Confirm your password" minlength="6"
+            required autocomplete="new-password">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="registerBtn">
+          Create Account
+        </button>
+
+        <div id="registerMessage" class="form-message" aria-live="polite"></div>
+
+        <div class="form-divider"><span>OR</span></div>
+
+        <button type="button" class="btn btn-google btn-full" id="googleRegisterBtn">
+          Sign Up with Google
+        </button>
+
+        <p class="account-switch">
+          Already have an account?
+          <button type="button" class="text-button" id="showLoginBtn">
+            Log In
+          </button>
+        </p>
+
+      </form>
+
+    </div>
+  </section>
+
+
+  <!-- BUSINESS REGISTRATION POPUP -->
+  <section class="popup-modal" id="registerPopup" hidden>
+    <div class="popup-container">
+
+      <button type="button" class="popup-close" data-close="registerPopup"
+        aria-label="Close">&times;</button>
+
+      <div class="popup-heading">
+        <span class="eyebrow">JOIN OUR DIRECTORY</span>
+        <h2>Register Your Business</h2>
+        <p>Provide accurate information about your business.</p>
+      </div>
+
+      <div id="registrationAuthNotice" class="notice-box" hidden>
+        You need to log in or create an account before registering a business.
+        <button type="button" class="btn btn-primary" id="registrationLoginBtn">
+          Log In / Register
+        </button>
+      </div>
+
+      <form id="businessProfileForm">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="businessName">Business Name *</label>
+            <input type="text" id="businessName" class="form-control"
+              required placeholder="Enter business name">
+          </div>
+
+          <div class="form-group">
+            <label for="businessCategory">Business Category *</label>
+            <select id="businessCategory" class="form-control" required>
+              <option value="">Select category</option>
+              <option>Plumbing</option>
+              <option>Electricians</option>
+              <option>Mechanics</option>
+              <option>Cleaning Services</option>
+              <option>Phone Repair</option>
+              <option>Taxi Services</option>
+              <option>Bodaboda</option>
+              <option>Tutors</option>
+              <option>Delivery Service</option>
+              <option>Welders</option>
+              <option>Mama Fua</option>
+              <option>Appliance Repair</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="businessOwner">Owner / Contact Person *</label>
+            <input type="text" id="businessOwner" class="form-control"
+              required placeholder="Contact person's name">
+          </div>
+
+          <div class="form-group">
+            <label for="businessPhone">Phone Number *</label>
+            <input type="tel" id="businessPhone" class="form-control"
+              required placeholder="e.g. 07XXXXXXXX">
+          </div>
+
+          <div class="form-group">
+            <label for="businessWhatsapp">WhatsApp Number</label>
+            <input type="tel" id="businessWhatsapp" class="form-control"
+              placeholder="WhatsApp number">
+          </div>
+
+          <div class="form-group">
+            <label for="businessCounty">County *</label>
+            <input type="text" id="businessCounty" class="form-control"
+              required placeholder="e.g. Nairobi">
+          </div>
+
+          <div class="form-group">
+            <label for="businessTown">Town / Area *</label>
+            <input type="text" id="businessTown" class="form-control"
+              required placeholder="e.g. Westlands">
+          </div>
+
+          <div class="form-group">
+            <label for="businessAddress">Physical Business Address</label>
+            <input type="text" id="businessAddress" class="form-control"
+              placeholder="Street, building or landmark">
+          </div>
+
+        </div>
+
+        <div class="form-group">
+          <label for="businessDescription">Business Description *</label>
+          <textarea id="businessDescription" class="form-control"
+            rows="4" required
+            placeholder="Describe your services and what customers can expect"></textarea>
+        </div>
+
+        <fieldset class="form-fieldset">
+          <legend>Business Images</legend>
+
+          <div class="form-group">
+            <label for="businessLogo">Business Logo</label>
+            <input type="file" id="businessLogo" class="form-control"
+              accept="image/*">
+            <div id="logoPreview" class="image-preview"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="businessPhotos">Service Photos</label>
+            <input type="file" id="businessPhotos" class="form-control"
+              accept="image/*" multiple>
+            <div id="photosPreview" class="image-preview"></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="form-fieldset">
+          <legend>Business Location</legend>
+
+          <p class="field-help">
+            You can enter your address manually. GPS location is optional.
+          </p>
+
+          <label class="consent-row">
+            <input type="checkbox" id="businessConsent">
+            <span>
+              I consent to sharing my device's current location with
+              FIND-ME KAZI for this business listing.
+            </span>
+          </label>
+
+          <button type="button" class="btn btn-outline" id="captureBusinessLocation">
+            📍 Capture Current Location
+          </button>
+
+          <p id="businessLocationStatus" class="field-help" aria-live="polite">
+            No GPS location captured.
+          </p>
+
+          <input type="hidden" id="businessLatitude">
+          <input type="hidden" id="businessLongitude">
+          <input type="hidden" id="businessAccuracy">
+        </fieldset>
+
+        <div class="form-group">
+          <label for="selectedPlanDisplay">Selected Plan</label>
+          <input type="text" id="selectedPlanDisplay" class="form-control"
+            value="Free Trial" readonly>
+        </div>
+
+        <input type="hidden" id="selectedPlan" value="free">
+
+        <button type="submit" class="btn btn-primary btn-full" id="saveBusinessBtn">
+          Submit Business for Approval
+        </button>
+
+        <div id="businessFormMessage" class="form-message" aria-live="polite"></div>
+
+        <p class="form-footnote">
+          Submitting your business does not guarantee publication. Listings
+          are reviewed before appearing publicly.
+        </p>
+
+      </form>
+
+    </div>
+  </section>
+
+
+  <!-- DASHBOARD POPUP -->
+  <section class="popup-modal" id="dashboardPopup" hidden>
+    <div class="popup-container">
+
+      <button type="button" class="popup-close" data-close="dashboardPopup"
+        aria-label="Close">&times;</button>
+
+      <div class="popup-heading">
+        <span class="eyebrow">ACCOUNT MANAGEMENT</span>
+        <h2>My Dashboard</h2>
+        <p>Manage your account and business listing.</p>
+      </div>
+
+      <div class="dashboard-welcome">
+        <div>
+          <h3 id="dashboardUserName">Welcome</h3>
+          <p id="dashboardUserEmail"></p>
+        </div>
+        <button type="button" class="btn btn-outline" id="logoutBtn">
+          Log Out
+        </button>
+      </div>
+
+      <div class="dashboard-grid">
+
+        <div class="dashboard-card">
+          <span>🏢</span>
+          <h3>My Business</h3>
+          <p>Manage your business information and listing.</p>
+          <button type="button" class="btn btn-primary"
+            id="editBusinessBtn">
+            Edit Business Profile
+          </button>
+        </div>
+
+        <div class="dashboard-card">
+          <span>📋</span>
+          <h3>Listing Status</h3>
+          <p id="businessStatusText">No business listing found.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <span>⭐</span>
+          <h3>My Plan</h3>
+          <p id="currentPlanText">Free Trial</p>
+          <button type="button" class="btn btn-outline"
+            data-popup="pricingPopup">
+            View Plans
+          </button>
+        </div>
+
+      </div>
+
+      <div class="dashboard-section">
+        <h3>Account Information</h3>
+        <p id="accountInfoText">Your account details will appear here.</p>
+      </div>
+
+      <div id="dashboardMessage" class="form-message" aria-live="polite"></div>
+
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-content">
+
+      <div class="footer-brand">
+        <span class="brand-logo">FIND-ME</span>
+        <p>Find it. Tap it. Get it done.</p>
       </div>
 
       <div class="footer-links">
-        <h4>Navigation</h4>
-        <ul>
-          <li><button type="button" class="footer-link-btn" data-popup="homePopup">Home</button></li>
-          <li><button type="button" class="footer-link-btn" data-popup="servicesPopup">Services</button></li>
-          <li><button type="button" class="footer-link-btn" data-popup="pricingPopup">Pricing</button></li>
-          <li><button type="button" class="footer-link-btn" data-popup="registerPopup">List Your Business</button></li>
-          <li><button type="button" class="footer-link-btn" data-popup="contactPopup">Contact</button></li>
-        </ul>
+        <button type="button" data-popup="servicesPopup">Services</button>
+        <button type="button" data-popup="pricingPopup">Pricing</button>
+        <button type="button" data-popup="contactPopup">Contact</button>
+        <button type="button" data-popup="accountPopup">My Account</button>
       </div>
 
-      <div class="footer-contact">
-        <h4>Contact &amp; Support</h4>
-        <p>Email: <a href="mailto:findme.feedback33@gmail.com">findme.feedback33@gmail.com</a></p>
-        <p class="footer-disclaimer">
-          Listings are subject to review. Always verify details directly with service providers.
-        </p>
-      </div>
-    </div>
+      <p class="copyright">
+        &copy; <span id="currentYear"></span> FIND-ME KAZI. All rights reserved.
+      </p>
 
-    <div class="footer-bottom">
-      <div class="container">
-        <p>&copy; <span id="currentYear"></span> FIND-ME KAZI. All rights reserved.</p>
-      </div>
     </div>
   </footer>
 
-  <!-- Single External ES Module Entry Point -->
+
+  <!-- JAVASCRIPT -->
   <script type="module" src="script.js"></script>
+
 </body>
 </html>
