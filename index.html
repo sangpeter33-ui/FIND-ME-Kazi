@@ -25,7 +25,8 @@
       </a>
 
       <button class="menu-toggle" id="menuToggle"
-        type="button" aria-expanded="false" aria-controls="mainNav">
+        type="button" aria-expanded="false" aria-controls="mainNav"
+        aria-label="Toggle navigation">
         <span></span>
         <span></span>
         <span></span>
@@ -39,10 +40,13 @@
       </nav>
 
       <div class="header-actions">
-        <button type="button" class="btn btn-outline" data-popup="accountPopup" id="openLoginBtn">
+        <button type="button" class="btn btn-outline"
+          data-popup="accountPopup" id="openLoginBtn">
           Log In
         </button>
-        <button type="button" class="btn btn-primary" data-popup="accountPopup" id="openRegisterBtn">
+
+        <button type="button" class="btn btn-primary"
+          data-popup="accountPopup" id="openRegisterBtn">
           Join Us
         </button>
       </div>
@@ -51,7 +55,7 @@
   </header>
 
 
-  <!-- MAIN HOMEPAGE -->
+  <!-- HOMEPAGE -->
   <main id="homePopup">
 
     <!-- HERO -->
@@ -85,6 +89,7 @@
           <div class="hero-card-icon">📍</div>
           <h3>Services around you</h3>
           <p>Find local businesses and connect with service providers.</p>
+
           <div class="hero-card-footer">
             <span>Simple</span>
             <span>Local</span>
@@ -118,8 +123,9 @@
 
         <div class="location-search">
           <button type="button" class="btn btn-outline" id="getBusinessLocation">
-            <span>📍</span> Use My Location
+            📍 Use My Location
           </button>
+
           <p id="locationStatus" aria-live="polite">
             Location search is optional.
           </p>
@@ -129,7 +135,7 @@
     </section>
 
 
-    <!-- DIRECTORY -->
+    <!-- BUSINESS DIRECTORY -->
     <section class="directory-section">
       <div class="container">
 
@@ -170,6 +176,7 @@
     <!-- CALL TO ACTION -->
     <section class="cta-section">
       <div class="container cta-content">
+
         <div>
           <span class="eyebrow">ARE YOU A SERVICE PROVIDER?</span>
           <h2>Let customers find your business.</h2>
@@ -180,6 +187,7 @@
           data-popup="registerPopup">
           Register Your Business
         </button>
+
       </div>
     </section>
 
@@ -190,8 +198,8 @@
   <section class="popup-modal" id="servicesPopup" hidden>
     <div class="popup-container">
 
-      <button type="button" class="popup-close" data-close="servicesPopup"
-        aria-label="Close">&times;</button>
+      <button type="button" class="popup-close"
+        data-close="servicesPopup" aria-label="Close">&times;</button>
 
       <div class="popup-heading">
         <span class="eyebrow">OUR DIRECTORY</span>
@@ -255,8 +263,8 @@
   <section class="popup-modal" id="pricingPopup" hidden>
     <div class="popup-container">
 
-      <button type="button" class="popup-close" data-close="pricingPopup"
-        aria-label="Close">&times;</button>
+      <button type="button" class="popup-close"
+        data-close="pricingPopup" aria-label="Close">&times;</button>
 
       <div class="popup-heading">
         <span class="eyebrow">BUSINESS LISTING PLANS</span>
@@ -284,7 +292,6 @@
           </button>
         </article>
 
-
         <article class="pricing-card featured-plan">
           <span class="plan-label">GROWTH</span>
           <h3>Growth Plan</h3>
@@ -304,7 +311,6 @@
             Choose Growth
           </button>
         </article>
-
 
         <article class="pricing-card">
           <h3>Verified Pro</h3>
@@ -340,8 +346,8 @@
   <section class="popup-modal" id="contactPopup" hidden>
     <div class="popup-container popup-narrow">
 
-      <button type="button" class="popup-close" data-close="contactPopup"
-        aria-label="Close">&times;</button>
+      <button type="button" class="popup-close"
+        data-close="contactPopup" aria-label="Close">&times;</button>
 
       <div class="popup-heading">
         <span class="eyebrow">GET IN TOUCH</span>
@@ -376,8 +382,8 @@
   <section class="popup-modal" id="accountPopup" hidden>
     <div class="popup-container popup-narrow">
 
-      <button type="button" class="popup-close" data-close="accountPopup"
-        aria-label="Close">&times;</button>
+      <button type="button" class="popup-close"
+        data-close="accountPopup" aria-label="Close">&times;</button>
 
       <div class="popup-heading">
         <span class="eyebrow">YOUR FIND-ME ACCOUNT</span>
@@ -389,10 +395,12 @@
         <button type="button" class="account-tab active" id="loginTab">
           Log In
         </button>
+
         <button type="button" class="account-tab" id="registerTab">
           Create Account
         </button>
       </div>
+
 
       <!-- LOGIN FORM -->
       <form id="loginForm" class="account-form">
@@ -405,9 +413,17 @@
 
         <div class="form-group">
           <label for="loginPassword">Password</label>
-          <input type="password" id="loginPassword" class="form-control"
-            placeholder="Enter your password" required
-            autocomplete="current-password">
+
+          <div class="password-field">
+            <input type="password" id="loginPassword" class="form-control"
+              placeholder="Enter your password" required
+              autocomplete="current-password">
+
+            <button type="button" class="toggle-password"
+              data-target="loginPassword" aria-label="Show password">
+              👁
+            </button>
+          </div>
         </div>
 
         <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
@@ -437,7 +453,7 @@
       </form>
 
 
-      <!-- REGISTER FORM -->
+      <!-- REGISTER ACCOUNT FORM -->
       <form id="registerForm" class="account-form" hidden>
 
         <div class="form-group">
@@ -454,16 +470,32 @@
 
         <div class="form-group">
           <label for="registerPassword">Create Password</label>
-          <input type="password" id="registerPassword" class="form-control"
-            placeholder="At least 6 characters" minlength="6"
-            required autocomplete="new-password">
+
+          <div class="password-field">
+            <input type="password" id="registerPassword" class="form-control"
+              placeholder="At least 6 characters" minlength="6"
+              required autocomplete="new-password">
+
+            <button type="button" class="toggle-password"
+              data-target="registerPassword" aria-label="Show password">
+              👁
+            </button>
+          </div>
         </div>
 
         <div class="form-group">
           <label for="confirmPassword">Confirm Password</label>
-          <input type="password" id="confirmPassword" class="form-control"
-            placeholder="Confirm your password" minlength="6"
-            required autocomplete="new-password">
+
+          <div class="password-field">
+            <input type="password" id="confirmPassword" class="form-control"
+              placeholder="Confirm your password" minlength="6"
+              required autocomplete="new-password">
+
+            <button type="button" class="toggle-password"
+              data-target="confirmPassword" aria-label="Show password">
+              👁
+            </button>
+          </div>
         </div>
 
         <button type="submit" class="btn btn-primary btn-full" id="registerBtn">
@@ -495,8 +527,8 @@
   <section class="popup-modal" id="registerPopup" hidden>
     <div class="popup-container">
 
-      <button type="button" class="popup-close" data-close="registerPopup"
-        aria-label="Close">&times;</button>
+      <button type="button" class="popup-close"
+        data-close="registerPopup" aria-label="Close">&times;</button>
 
       <div class="popup-heading">
         <span class="eyebrow">JOIN OUR DIRECTORY</span>
@@ -505,13 +537,17 @@
       </div>
 
       <div id="registrationAuthNotice" class="notice-box" hidden>
-        You need to log in or create an account before registering a business.
+        <p>You need to log in or create an account before registering a business.</p>
+
         <button type="button" class="btn btn-primary" id="registrationLoginBtn">
           Log In / Register
         </button>
       </div>
 
+
       <form id="businessProfileForm">
+
+        <h3 class="form-section-title">Business Information</h3>
 
         <div class="form-grid">
 
@@ -522,22 +558,31 @@
           </div>
 
           <div class="form-group">
-            <label for="businessCategory">Business Category *</label>
+            <label for="businessCategory">Type of Business *</label>
+
             <select id="businessCategory" class="form-control" required>
-              <option value="">Select category</option>
-              <option>Plumbing</option>
-              <option>Electricians</option>
-              <option>Mechanics</option>
-              <option>Cleaning Services</option>
-              <option>Phone Repair</option>
-              <option>Taxi Services</option>
-              <option>Bodaboda</option>
-              <option>Tutors</option>
-              <option>Delivery Service</option>
-              <option>Welders</option>
-              <option>Mama Fua</option>
-              <option>Appliance Repair</option>
-              <option>Other</option>
+              <option value="">Select your business type</option>
+              <option value="Plumbing">Plumbing</option>
+              <option value="Electricians">Electricians</option>
+              <option value="Mechanics">Mechanics</option>
+              <option value="Cleaning Services">Cleaning Services</option>
+              <option value="Mama Fua">Mama Fua</option>
+              <option value="Taxi Services">Taxi Services</option>
+              <option value="Bodaboda">Bodaboda</option>
+              <option value="Delivery Service">Delivery Services</option>
+              <option value="Phone Repair">Phone Repair</option>
+              <option value="Appliance Repair">Appliance Repair</option>
+              <option value="Welders">Welding Services</option>
+              <option value="Tutors">Tutoring</option>
+              <option value="Carpentry">Carpentry</option>
+              <option value="Beauty and Salon">Beauty and Salon</option>
+              <option value="Barber">Barber</option>
+              <option value="Construction">Construction</option>
+              <option value="Computer Services">Computer Services</option>
+              <option value="Restaurants">Restaurants</option>
+              <option value="Photography">Photography</option>
+              <option value="Gardening">Gardening and Landscaping</option>
+              <option value="Other">Other</option>
             </select>
           </div>
 
@@ -579,6 +624,7 @@
 
         </div>
 
+
         <div class="form-group">
           <label for="businessDescription">Business Description *</label>
           <textarea id="businessDescription" class="form-control"
@@ -586,25 +632,48 @@
             placeholder="Describe your services and what customers can expect"></textarea>
         </div>
 
+
+        <!-- BUSINESS IMAGE UPLOAD -->
         <fieldset class="form-fieldset">
-          <legend>Business Images</legend>
+
+          <legend>Business Logo and Photos</legend>
+
+          <p class="field-help">
+            Add images to help customers recognise your business and see
+            the services you provide.
+          </p>
 
           <div class="form-group">
-            <label for="businessLogo">Business Logo</label>
+            <label for="businessLogo">Upload Business Logo</label>
+
             <input type="file" id="businessLogo" class="form-control"
-              accept="image/*">
-            <div id="logoPreview" class="image-preview"></div>
+              accept="image/jpeg,image/png,image/webp">
+
+            <div id="logoPreview" class="image-preview"
+              aria-live="polite"></div>
           </div>
 
           <div class="form-group">
-            <label for="businessPhotos">Service Photos</label>
+            <label for="businessPhotos">Upload Business / Service Photos</label>
+
             <input type="file" id="businessPhotos" class="form-control"
-              accept="image/*" multiple>
-            <div id="photosPreview" class="image-preview"></div>
+              accept="image/jpeg,image/png,image/webp" multiple>
+
+            <p class="field-help">
+              You can select multiple photos of your products, workplace
+              or completed services.
+            </p>
+
+            <div id="photosPreview" class="image-preview"
+              aria-live="polite"></div>
           </div>
+
         </fieldset>
 
+
+        <!-- BUSINESS LOCATION -->
         <fieldset class="form-fieldset">
+
           <legend>Business Location</legend>
 
           <p class="field-help">
@@ -619,36 +688,56 @@
             </span>
           </label>
 
-          <button type="button" class="btn btn-outline" id="captureBusinessLocation">
+          <button type="button" class="btn btn-outline"
+            id="captureBusinessLocation">
             📍 Capture Current Location
           </button>
 
-          <p id="businessLocationStatus" class="field-help" aria-live="polite">
+          <p id="businessLocationStatus" class="field-help"
+            aria-live="polite">
             No GPS location captured.
           </p>
 
           <input type="hidden" id="businessLatitude">
           <input type="hidden" id="businessLongitude">
           <input type="hidden" id="businessAccuracy">
+
         </fieldset>
 
-        <div class="form-group">
-          <label for="selectedPlanDisplay">Selected Plan</label>
-          <input type="text" id="selectedPlanDisplay" class="form-control"
-            value="Free Trial" readonly>
-        </div>
 
-        <input type="hidden" id="selectedPlan" value="free">
+        <!-- LISTING PLAN -->
+        <fieldset class="form-fieldset">
 
-        <button type="submit" class="btn btn-primary btn-full" id="saveBusinessBtn">
+          <legend>Listing Plan</legend>
+
+          <div class="form-group">
+            <label for="selectedPlanDisplay">Selected Plan</label>
+
+            <input type="text" id="selectedPlanDisplay"
+              class="form-control" value="Free Trial" readonly>
+          </div>
+
+          <input type="hidden" id="selectedPlan" value="free">
+
+          <p class="field-help">
+            You can choose a different plan from the Pricing section.
+            Paid plans require separate payment confirmation.
+          </p>
+
+        </fieldset>
+
+
+        <button type="submit" class="btn btn-primary btn-full"
+          id="saveBusinessBtn">
           Submit Business for Approval
         </button>
 
-        <div id="businessFormMessage" class="form-message" aria-live="polite"></div>
+        <div id="businessFormMessage" class="form-message"
+          aria-live="polite"></div>
 
         <p class="form-footnote">
-          Submitting your business does not guarantee publication. Listings
-          are reviewed before appearing publicly.
+          Submitting your business does not guarantee publication.
+          Listings are reviewed before appearing publicly.
         </p>
 
       </form>
@@ -661,8 +750,8 @@
   <section class="popup-modal" id="dashboardPopup" hidden>
     <div class="popup-container">
 
-      <button type="button" class="popup-close" data-close="dashboardPopup"
-        aria-label="Close">&times;</button>
+      <button type="button" class="popup-close"
+        data-close="dashboardPopup" aria-label="Close">&times;</button>
 
       <div class="popup-heading">
         <span class="eyebrow">ACCOUNT MANAGEMENT</span>
@@ -675,6 +764,7 @@
           <h3 id="dashboardUserName">Welcome</h3>
           <p id="dashboardUserEmail"></p>
         </div>
+
         <button type="button" class="btn btn-outline" id="logoutBtn">
           Log Out
         </button>
@@ -686,6 +776,7 @@
           <span>🏢</span>
           <h3>My Business</h3>
           <p>Manage your business information and listing.</p>
+
           <button type="button" class="btn btn-primary"
             id="editBusinessBtn">
             Edit Business Profile
@@ -702,6 +793,7 @@
           <span>⭐</span>
           <h3>My Plan</h3>
           <p id="currentPlanText">Free Trial</p>
+
           <button type="button" class="btn btn-outline"
             data-popup="pricingPopup">
             View Plans
@@ -715,7 +807,8 @@
         <p id="accountInfoText">Your account details will appear here.</p>
       </div>
 
-      <div id="dashboardMessage" class="form-message" aria-live="polite"></div>
+      <div id="dashboardMessage" class="form-message"
+        aria-live="polite"></div>
 
     </div>
   </section>
@@ -738,14 +831,38 @@
       </div>
 
       <p class="copyright">
-        &copy; <span id="currentYear"></span> FIND-ME KAZI. All rights reserved.
+        &copy; <span id="currentYear"></span>
+        FIND-ME KAZI. All rights reserved.
       </p>
 
     </div>
   </footer>
 
 
-  <!-- JAVASCRIPT -->
+  <!-- PASSWORD VISIBILITY -->
+  <script>
+    document.addEventListener("click", function(event) {
+      const button = event.target.closest(".toggle-password");
+
+      if (!button) return;
+
+      const input = document.getElementById(button.dataset.target);
+
+      if (!input) return;
+
+      const showing = input.type === "password";
+
+      input.type = showing ? "text" : "password";
+      button.textContent = showing ? "🙈" : "👁";
+      button.setAttribute(
+        "aria-label",
+        showing ? "Hide password" : "Show password"
+      );
+    });
+  </script>
+
+
+  <!-- MAIN JAVASCRIPT -->
   <script type="module" src="script.js"></script>
 
 </body>
