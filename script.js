@@ -2,8 +2,9 @@
 /* ==========================================
    FIND-ME KAZI
    COMPLETE WEBSITE JAVASCRIPT
-   Firebase Authentication, Firestore,
-   Storage, Business Profiles and Pop-ups
+   Firebase Authentication, Password Recovery,
+   Firestore, Storage, Business Profiles,
+   Search, Categories and Pop-ups
    ========================================== */
 
 import { auth, db, storage } from "./firebase.js";
@@ -15,7 +16,8 @@ import {
   onAuthStateChanged,
   updateProfile,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
@@ -111,6 +113,15 @@ function openLogin() {
   if (getElement("loginForm")) {
     getElement("loginForm").hidden = false;
   }
+
+  if (getElement("accountModalTitle")) {
+    getElement("accountModalTitle").textContent = "Welcome Back";
+  }
+
+  if (getElement("accountModalDescription")) {
+    getElement("accountModalDescription").textContent =
+      "Login to manage your business profile.";
+  }
 }
 
 function openRegister() {
@@ -122,6 +133,15 @@ function openRegister() {
 
   if (getElement("registerForm")) {
     getElement("registerForm").hidden = false;
+  }
+
+  if (getElement("accountModalTitle")) {
+    getElement("accountModalTitle").textContent = "Create Your Account";
+  }
+
+  if (getElement("accountModalDescription")) {
+    getElement("accountModalDescription").textContent =
+      "Register to manage your business profile.";
   }
 }
 
@@ -159,13 +179,11 @@ document.addEventListener("click", event => {
 
 });
 
-
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") {
     closeAllPopups();
   }
 });
-
 
 const menuToggle = getElement("menuToggle");
 const mainNavigation = getElement("mainNavigation");
@@ -175,7 +193,6 @@ if (menuToggle && mainNavigation) {
     mainNavigation.classList.toggle("active");
   });
 }
-
 
 getElement("openLoginBtn")?.addEventListener("click", openLogin);
 
@@ -208,12 +225,20 @@ if (registerForm) {
     const confirmPassword = getElement("confirmPassword").value;
 
     if (password.length < 6) {
-      showMessage("registerMessage", "Password must have at least 6 characters.", "error");
+      showMessage(
+        "registerMessage",
+        "Password must have at least 6 characters.",
+        "error"
+      );
       return;
     }
 
     if (password !== confirmPassword) {
-      showMessage("registerMessage", "Your passwords do not match.", "error");
+      showMessage(
+        "registerMessage",
+        "Your passwords do not match.",
+        "error"
+      );
       return;
     }
 
@@ -332,6 +357,107 @@ if (loginForm) {
 
 
 /* ==========================================
+   FORGOT PASSWORD
+   SEND RESET EMAIL THROUGH FIREBASE
+   ========================================== */
+
+const forgotPasswordLink = getElement("forgotPasswordLink");
+
+if (forgotPasswordLink) {
+
+  forgotPasswordLink.addEventListener("click", async event => {
+
+    event.preventDefault();
+
+    const email = getElement("loginEmail")?.value.trim();
+
+    const message = getElement("resetMessage");
+
+    const loginEmail = getElement("loginEmail");
+
+    if (!email) {
+
+      showMessage(
+        "resetMessage",
+        "Please enter your registered email address first.",
+        "error"
+      );
+
+      loginEmail?.focus();
+
+      return;
+    }
+
+    if (!loginEmail.checkValidity()) {
+
+      showMessage(
+        "resetMessage",
+        "Please enter a valid email address.",
+        "error"
+      );
+
+      loginEmail.focus();
+
+      return;
+    }
+
+    try {
+
+      forgotPasswordLink.style.pointerEvents = "none";
+      forgotPasswordLink.style.opacity = "0.6";
+
+      showMessage(
+        "resetMessage",
+        "Sending password recovery email..."
+      );
+
+      await sendPasswordResetEmail(auth, email);
+
+      showMessage(
+        "resetMessage",
+        "If an account exists for this email, a password reset link has been sent. Check your inbox and spam folder.",
+        "success"
+      );
+
+    } catch (error) {
+
+      console.error("Password recovery error:", error);
+
+      let messageText =
+        "Unable to send the recovery email. Please check your email and try again.";
+
+      if (error.code === "auth/invalid-email") {
+        messageText = "Please enter a valid email address.";
+      }
+
+      if (error.code === "auth/too-many-requests") {
+        messageText = "Too many attempts. Please wait before trying again.";
+      }
+
+      if (error.code === "auth/unauthorized-domain") {
+        messageText =
+          "This website domain is not authorized in Firebase.";
+      }
+
+      showMessage(
+        "resetMessage",
+        messageText,
+        "error"
+      );
+
+    } finally {
+
+      forgotPasswordLink.style.pointerEvents = "";
+      forgotPasswordLink.style.opacity = "";
+
+    }
+
+  });
+
+}
+
+
+/* ==========================================
    GOOGLE SIGN-IN
    ========================================== */
 
@@ -390,17 +516,37 @@ function friendlyError(error) {
   const code = error.code || "";
 
   const messages = {
-    "auth/email-already-in-use": "This email already has an account. Please login.",
-    "auth/invalid-email": "Please enter a valid email address.",
-    "auth/weak-password": "Please choose a stronger password.",
-    "auth/user-not-found": "No account was found with this email.",
-    "auth/wrong-password": "Incorrect password.",
-    "auth/invalid-credential": "Your email or password is incorrect.",
-    "auth/popup-closed-by-user": "The sign-in window was closed.",
-    "auth/unauthorized-domain": "This website domain is not authorized in Firebase."
+    "auth/email-already-in-use":
+      "This email already has an account. Please login.",
+
+    "auth/invalid-email":
+      "Please enter a valid email address.",
+
+    "auth/weak-password":
+      "Please choose a stronger password.",
+
+    "auth/user-not-found":
+      "No account was found with this email.",
+
+    "auth/wrong-password":
+      "Incorrect password.",
+
+    "auth/invalid-credential":
+      "Your email or password is incorrect.",
+
+    "auth/popup-closed-by-user":
+      "The sign-in window was closed.",
+
+    "auth/unauthorized-domain":
+      "This website domain is not authorized in Firebase.",
+
+    "auth/too-many-requests":
+      "Too many attempts. Please wait and try again."
   };
 
-  return messages[code] || error.message || "Something went wrong. Please try again.";
+  return messages[code] ||
+    error.message ||
+    "Something went wrong. Please try again.";
 }
 
 
@@ -421,7 +567,8 @@ function updateAccountInterface(user) {
   if (logoutButton) logoutButton.hidden = !user;
 
   if (getElement("signedInEmail")) {
-    getElement("signedInEmail").textContent = user?.email || "Not signed in";
+    getElement("signedInEmail").textContent =
+      user?.email || "Not signed in";
   }
 
 }
@@ -555,7 +702,10 @@ getElement("businessPhotos")?.addEventListener("change", event => {
 
     if (files.length > limit) {
       event.target.value = "";
-      throw new Error("Your selected plan allows up to " + limit + " photos.");
+
+      throw new Error(
+        "Your selected plan allows up to " + limit + " photos."
+      );
     }
 
     files.forEach(file => {
@@ -617,7 +767,8 @@ getElement("getBusinessLocation")?.addEventListener("click", () => {
   if (!navigator.geolocation) {
 
     if (status) {
-      status.textContent = "Location services are not supported by this browser.";
+      status.textContent =
+        "Location services are not supported by this browser.";
     }
 
     return;
@@ -642,7 +793,8 @@ getElement("getBusinessLocation")?.addEventListener("click", () => {
         position.coords.accuracy;
 
       if (status) {
-        status.textContent = "Your location has been captured successfully.";
+        status.textContent =
+          "Your location has been captured successfully.";
       }
 
     },
@@ -683,12 +835,24 @@ if (businessProfileForm) {
 
     if (!currentUser) {
       openLogin();
-      showMessage("profileMessage", "Please login before saving your business.", "error");
+
+      showMessage(
+        "profileMessage",
+        "Please login before saving your business.",
+        "error"
+      );
+
       return;
     }
 
     if (!getElement("businessConsent").checked) {
-      showMessage("profileMessage", "Please confirm your business information.", "error");
+
+      showMessage(
+        "profileMessage",
+        "Please confirm your business information.",
+        "error"
+      );
+
       return;
     }
 
@@ -703,7 +867,11 @@ if (businessProfileForm) {
         saveButton.textContent = "Saving your profile...";
       }
 
-      const existingReference = doc(db, "businesses", currentUser.uid);
+      const existingReference = doc(
+        db,
+        "businesses",
+        currentUser.uid
+      );
 
       const existingSnapshot = await getDoc(existingReference);
 
@@ -711,16 +879,32 @@ if (businessProfileForm) {
         ? existingSnapshot.data()
         : {};
 
-      const businessName = getElement("businessName").value.trim();
-      const category = getElement("businessCategory").value;
-      const ownerName = getElement("businessOwnerName").value.trim();
-      const phone = getElement("businessPhone").value.trim();
-      const whatsapp = getElement("businessWhatsApp").value.trim();
-      const location = getElement("businessLocation").value.trim();
-      const address = getElement("businessAddress").value.trim();
-      const description = getElement("businessDescription").value.trim();
+      const businessName =
+        getElement("businessName").value.trim();
 
-      const logoFile = getElement("businessLogo").files[0];
+      const category =
+        getElement("businessCategory").value;
+
+      const ownerName =
+        getElement("businessOwnerName").value.trim();
+
+      const phone =
+        getElement("businessPhone").value.trim();
+
+      const whatsapp =
+        getElement("businessWhatsApp").value.trim();
+
+      const location =
+        getElement("businessLocation").value.trim();
+
+      const address =
+        getElement("businessAddress").value.trim();
+
+      const description =
+        getElement("businessDescription").value.trim();
+
+      const logoFile =
+        getElement("businessLogo").files[0];
 
       const photoFiles = Array.from(
         getElement("businessPhotos").files
@@ -729,7 +913,11 @@ if (businessProfileForm) {
       const photoLimit = PLAN_LIMITS[selectedPlan] || 3;
 
       if (photoFiles.length > photoLimit) {
-        throw new Error("Your selected plan allows up to " + photoLimit + " service photos.");
+        throw new Error(
+          "Your selected plan allows up to " +
+          photoLimit +
+          " service photos."
+        );
       }
 
       photoFiles.forEach(validateImage);
@@ -747,22 +935,36 @@ if (businessProfileForm) {
         photoUrls = [];
 
         for (const file of photoFiles) {
-          const url = await uploadBusinessImage(file, "photos");
+
+          const url = await uploadBusinessImage(
+            file,
+            "photos"
+          );
+
           photoUrls.push(url);
+
         }
 
       }
 
-      const latitude = getElement("businessLatitude").value;
-      const longitude = getElement("businessLongitude").value;
-      const accuracy = getElement("businessAccuracy").value;
+      const latitude =
+        getElement("businessLatitude").value;
+
+      const longitude =
+        getElement("businessLongitude").value;
+
+      const accuracy =
+        getElement("businessAccuracy").value;
 
       let planStatus = "payment_pending";
-      let trialEndsAt = existingBusiness.trialEndsAt || null;
+
+      let trialEndsAt =
+        existingBusiness.trialEndsAt || null;
 
       if (selectedPlan === "Free Trial") {
 
-        const trialAlreadyUsed = existingBusiness.trialStartedAt;
+        const trialAlreadyUsed =
+          existingBusiness.trialStartedAt;
 
         if (!trialAlreadyUsed) {
 
@@ -819,7 +1021,8 @@ if (businessProfileForm) {
         planStatus: planStatus,
 
         trialStartedAt:
-          selectedPlan === "Free Trial" && !existingBusiness.trialStartedAt
+          selectedPlan === "Free Trial" &&
+          !existingBusiness.trialStartedAt
             ? serverTimestamp()
             : existingBusiness.trialStartedAt || null,
 
@@ -834,7 +1037,11 @@ if (businessProfileForm) {
 
       };
 
-      await setDoc(existingReference, businessData, { merge: true });
+      await setDoc(
+        existingReference,
+        businessData,
+        { merge: true }
+      );
 
       showMessage(
         "profileMessage",
@@ -843,11 +1050,13 @@ if (businessProfileForm) {
       );
 
       if (getElement("profileStatus")) {
-        getElement("profileStatus").textContent = "Pending review";
+        getElement("profileStatus").textContent =
+          "Pending review";
       }
 
       if (getElement("currentPlan")) {
-        getElement("currentPlan").textContent = selectedPlan;
+        getElement("currentPlan").textContent =
+          selectedPlan;
       }
 
       if (getElement("myBusinessListing")) {
@@ -886,7 +1095,9 @@ if (businessProfileForm) {
 
       if (saveButton) {
         saveButton.disabled = false;
-        saveButton.textContent = originalText || "Save Business Profile";
+
+        saveButton.textContent =
+          originalText || "Save Business Profile";
       }
 
     }
@@ -906,7 +1117,11 @@ async function loadMyBusinessProfile() {
 
   try {
 
-    const reference = doc(db, "businesses", currentUser.uid);
+    const reference = doc(
+      db,
+      "businesses",
+      currentUser.uid
+    );
 
     const snapshot = await getDoc(reference);
 
@@ -915,41 +1130,50 @@ async function loadMyBusinessProfile() {
     const business = snapshot.data();
 
     if (getElement("businessName")) {
-      getElement("businessName").value = business.businessName || "";
+      getElement("businessName").value =
+        business.businessName || "";
     }
 
     if (getElement("businessCategory")) {
-      getElement("businessCategory").value = business.category || "";
+      getElement("businessCategory").value =
+        business.category || "";
     }
 
     if (getElement("businessOwnerName")) {
-      getElement("businessOwnerName").value = business.ownerName || "";
+      getElement("businessOwnerName").value =
+        business.ownerName || "";
     }
 
     if (getElement("businessPhone")) {
-      getElement("businessPhone").value = business.phone || "";
+      getElement("businessPhone").value =
+        business.phone || "";
     }
 
     if (getElement("businessWhatsApp")) {
-      getElement("businessWhatsApp").value = business.whatsapp || "";
+      getElement("businessWhatsApp").value =
+        business.whatsapp || "";
     }
 
     if (getElement("businessLocation")) {
-      getElement("businessLocation").value = business.location || "";
+      getElement("businessLocation").value =
+        business.location || "";
     }
 
     if (getElement("businessAddress")) {
-      getElement("businessAddress").value = business.address || "";
+      getElement("businessAddress").value =
+        business.address || "";
     }
 
     if (getElement("businessDescription")) {
-      getElement("businessDescription").value = business.description || "";
+      getElement("businessDescription").value =
+        business.description || "";
     }
 
     selectedPlan = business.plan || "Free Trial";
 
     if (getElement("currentPlan")) {
-      getElement("currentPlan").textContent = selectedPlan;
+      getElement("currentPlan").textContent =
+        selectedPlan;
     }
 
     if (getElement("profileStatus")) {
@@ -959,12 +1183,15 @@ async function loadMyBusinessProfile() {
 
     if (getElement("myBusinessListing")) {
       getElement("myBusinessListing").textContent =
-        business.businessName + " — " + (business.status || "Pending review");
+        (business.businessName || "Business") +
+        " — " +
+        (business.status || "Pending review");
     }
 
     if (getElement("photoLimitMessage")) {
       getElement("photoLimitMessage").textContent =
-        selectedPlan + ": Up to " +
+        selectedPlan +
+        ": Up to " +
         (PLAN_LIMITS[selectedPlan] || 3) +
         " service photos.";
     }
@@ -993,12 +1220,16 @@ document.querySelectorAll(".choose-plan-btn").forEach(button => {
     if (message) {
 
       if (selectedPlan === "Free Trial") {
+
         message.textContent =
           "Free Trial selected. Create an account to continue.";
+
       } else {
+
         message.textContent =
           selectedPlan +
           " selected. Payment and activation must be confirmed before premium access starts.";
+
       }
 
     }
@@ -1006,12 +1237,14 @@ document.querySelectorAll(".choose-plan-btn").forEach(button => {
     if (currentUser) {
 
       if (getElement("currentPlan")) {
-        getElement("currentPlan").textContent = selectedPlan;
+        getElement("currentPlan").textContent =
+          selectedPlan;
       }
 
       if (getElement("photoLimitMessage")) {
         getElement("photoLimitMessage").textContent =
-          selectedPlan + ": Up to " +
+          selectedPlan +
+          ": Up to " +
           (PLAN_LIMITS[selectedPlan] || 3) +
           " service photos.";
       }
@@ -1091,13 +1324,17 @@ function displayBusinesses(businesses) {
 
   if (businesses.length === 0) {
 
-    if (emptyMessage) emptyMessage.hidden = false;
+    if (emptyMessage) {
+      emptyMessage.hidden = false;
+    }
 
     return;
 
   }
 
-  if (emptyMessage) emptyMessage.hidden = true;
+  if (emptyMessage) {
+    emptyMessage.hidden = true;
+  }
 
   businesses.forEach(business => {
 
@@ -1119,25 +1356,29 @@ function displayBusinesses(businesses) {
 
     const title = document.createElement("h3");
 
-    title.textContent = business.businessName || "Business";
+    title.textContent =
+      business.businessName || "Business";
 
     card.appendChild(title);
 
     const category = document.createElement("p");
 
-    category.textContent = "Category: " + (business.category || "Not specified");
+    category.textContent =
+      "Category: " + (business.category || "Not specified");
 
     card.appendChild(category);
 
     const location = document.createElement("p");
 
-    location.textContent = "Location: " + (business.location || "Not specified");
+    location.textContent =
+      "Location: " + (business.location || "Not specified");
 
     card.appendChild(location);
 
     const description = document.createElement("p");
 
-    description.textContent = business.description || "";
+    description.textContent =
+      business.description || "";
 
     card.appendChild(description);
 
@@ -1171,16 +1412,20 @@ function displayBusinesses(businesses) {
 
     if (business.whatsapp) {
 
-      const whatsappNumber = business.whatsapp.replace(/\D/g, "");
+      const whatsappNumber =
+        business.whatsapp.replace(/\D/g, "");
 
       const whatsappButton = document.createElement("a");
 
       whatsappButton.className = "btn btn-outline";
+
       whatsappButton.href =
         "https://wa.me/" + whatsappNumber;
 
       whatsappButton.target = "_blank";
+
       whatsappButton.rel = "noopener noreferrer";
+
       whatsappButton.textContent = "WhatsApp";
 
       card.appendChild(whatsappButton);
@@ -1200,9 +1445,11 @@ function displayBusinesses(businesses) {
 
 function filterBusinesses() {
 
-  const search = normalize(getElement("serviceSearch")?.value);
+  const search =
+    normalize(getElement("serviceSearch")?.value);
 
-  const location = normalize(getElement("locationSearch")?.value);
+  const location =
+    normalize(getElement("locationSearch")?.value);
 
   const results = approvedBusinesses.filter(business => {
 
@@ -1233,11 +1480,20 @@ function filterBusinesses() {
 }
 
 
-getElement("searchBtn")?.addEventListener("click", filterBusinesses);
+getElement("searchBtn")?.addEventListener(
+  "click",
+  filterBusinesses
+);
 
-getElement("serviceSearch")?.addEventListener("input", filterBusinesses);
+getElement("serviceSearch")?.addEventListener(
+  "input",
+  filterBusinesses
+);
 
-getElement("locationSearch")?.addEventListener("input", filterBusinesses);
+getElement("locationSearch")?.addEventListener(
+  "input",
+  filterBusinesses
+);
 
 
 document.querySelectorAll(".category-btn").forEach(button => {
@@ -1250,7 +1506,8 @@ document.querySelectorAll(".category-btn").forEach(button => {
 
     button.classList.add("active");
 
-    activeCategory = button.dataset.category || "all";
+    activeCategory =
+      button.dataset.category || "all";
 
     filterBusinesses();
 
@@ -1271,4 +1528,6 @@ if (year) {
 
 loadApprovedBusinesses();
 
-console.log("FIND-ME KAZI JavaScript loaded successfully.");
+console.log(
+  "FIND-ME KAZI JavaScript loaded successfully."
+);
